@@ -6,21 +6,48 @@ from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.db.models import Count
 from .models import Course, Lesson, Enrollment, Profile, Category
-from .forms import CourseForm, LessonForm
+from .forms import CourseForm, LessonForm, CustomUserCreationForm
+from django.contrib.auth.models import User
 
 # -----------------------------
 # AUTH
 # -----------------------------
-def register(request):
+# views.py
+
+
+def register_student(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.profile.is_instructor = False
+            user.profile.save()
             login(request, user)
             return redirect('dashboard')
     else:
         form = UserCreationForm()
-    return render(request, 'auth/register.html', {'form': form, 'page_title': 'Register'})
+    return render(request, 'auth/register_student.html', {'form': form, 'page_title': 'Student Registration'})
+
+
+def register_instructor(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.profile.is_instructor = True
+            user.profile.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'auth/register_instructor.html', {'form': form, 'page_title': 'Instructor Registration'})
+
+def choose_registration(request):
+    return render(request, 'auth/choose_registration.html', {
+        'page_title': 'Register'
+    })
+
+
 
 
 # views.py

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load widget_tweaks %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card p-5 shadow" style="width: 450px; border-radius: 12px;">
+    <h2 class="text-center mb-4">{{ page_title }}</h2>
+
+    <form method="post" id="registrationForm">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        {{ form.username.label_tag }}
+        {{ form.username|add_class:"form-control" }}
+        <div class="form-text text-danger small mt-1" id="usernameHelp"></div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.email.label_tag }}
+        {{ form.email|add_class:"form-control" }}
+        <div class="form-text text-danger small mt-1" id="emailHelp"></div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.password1.label_tag }}
+        {{ form.password1|add_class:"form-control" }}
+        <div class="form-text text-danger small mt-1" id="passwordHelp"></div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.password2.label_tag }}
+        {{ form.password2|add_class:"form-control" }}
+        <div class="form-text text-danger small mt-1" id="confirmHelp"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+    </form>
+
+    <p class="text-center mt-3">
+      Already have an account? <a href="{% url 'login' %}">Login here</a>.
+    </p>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const password = document.querySelector("#id_password1");
+    const confirm = document.querySelector("#id_password2");
+    const passwordHelp = document.getElementById("passwordHelp");
+    const confirmHelp = document.getElementById("confirmHelp");
+
+    password.addEventListener("input", function() {
+        if (password.value.length < 8) {
+            passwordHelp.textContent = "* Password must be at least 8 characters";
+        } else {
+            passwordHelp.textContent = "";
+        }
+    });
+
+    confirm.addEventListener("input", function() {
+        if (confirm.value !== password.value) {
+            confirmHelp.textContent = "* Passwords do not match";
+        } else {
+            confirmHelp.textContent = "";
+        }
+    });
+
+    const form = document.getElementById("registrationForm");
+    form.addEventListener("submit", function(e) {
+        if (password.value.length < 8 || confirm.value !== password.value) {
+            e.preventDefault();
+            alert("Please fix the errors before submitting.");
+        }
+    });
+});
+</script>
+
+{% endblock %}

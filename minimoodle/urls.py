@@ -14,9 +14,15 @@ urlpatterns = [
     path('', home, name='home'),
     path('courses/', include('courses.urls')),
 
-    path('register/', course_views.register, name='register'),
+    # Registration URLs
+    path('register/', course_views.choose_registration, name='register'),
+    path('register/student/', course_views.register_student, name='register_student'),
+    path('register/instructor/', course_views.register_instructor, name='register_instructor'),
+
+    # Login/Logout
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
+    # Dashboard
     path('dashboard/', course_views.dashboard, name='dashboard'),
 ]

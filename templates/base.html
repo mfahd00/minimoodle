@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}MiniMoodle{% endblock %}</title>
+    <title>{% block title %}LearningAssistancePortal{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
@@ -11,7 +11,11 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
   <div class="container">
-    <a class="navbar-brand fw-bold text-white" href="{% url 'home' %}">MiniMoodle</a>
+    <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{% url 'home' %}">
+  <img src="{% static 'images/login-logo.jpeg' %}" alt="LAP Logo" width="40" height="40" class="me-2 rounded-circle">
+  LAP
+</a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -22,29 +26,30 @@
         <li class="nav-item">
           <a class="nav-link fw-semibold text-white" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
-          <li class="nav-item">
-            <a class="nav-link fw-semibold text-white" href="{% url 'course_list' %}">Courses</a>
-          </li>
-          {% if user.profile.is_instructor %}
-          <li class="nav-item">
-            <a class="nav-link fw-semibold text-white" href="{% url 'create_course' %}">Create Course</a>
-          </li>
-          {% endif %}
-          <li class="nav-item">
-            <a class="nav-link fw-semibold text-white" href="{% url 'logout' %}">Logout</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold text-white" href="{% url 'course_list' %}">Courses</a>
+        </li>
+        {% if user.profile.is_instructor %}
+        <li class="nav-item">
+          <a class="nav-link fw-semibold text-white" href="{% url 'create_course' %}">Create Course</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link fw-semibold text-white" href="{% url 'logout' %}">Logout</a>
+        </li>
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link fw-semibold text-white" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link fw-semibold text-white" href="{% url 'register' %}">Register</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold text-white" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold text-white" href="{% url 'register' %}">Register</a>
+        </li>
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
+
 
 
 <div class="container mt-4">
