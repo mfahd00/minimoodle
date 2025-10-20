@@ -1,0 +1,37 @@
+<aside class="sidebar">
+  <h3>Browse by Category</h3>
+  <ul>
+    {% for category in categories %}
+      <li>
+        <a href="{% url 'courses_by_category' category.id %}">{{ category.name }}</a>
+      </li>
+    {% empty %}
+      <li>No categories yet.</li>
+    {% endfor %}
+  </ul>
+</aside>
+
+<style>
+/* Sidebar styling */
+.sidebar {
+    min-width: 200px;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f7f7f7;
+    margin-bottom: 1rem;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 0.5rem;
+}
+</style>

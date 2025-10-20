@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from courses import views as course_views
+from . import views
+
 
 urlpatterns = [
     path('', course_views.home, name='home'),
@@ -12,7 +14,10 @@ urlpatterns = [
     path('courses/<int:course_id>/add_lesson/', course_views.create_lesson, name='create_lesson'),
     path('courses/<int:course_id>/enroll/', course_views.enroll_course, name='enroll_course'),
     path('register/', course_views.register, name='register'),
-    path('login/', course_views.login_view, name='login'),
-    path('logout/', course_views.logout_view, name='logout'),
-    path('dashboard/', course_views.dashboard, name='dashboard'),
+    path('login/', views.login_page, name='login'),
+    path('login/student/', views.login_student, name='login_student'),
+    path('login/instructor/', views.login_instructor, name='login_instructor'),
+    path('logout/', views.logout_view, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('courses/category/<int:category_id>/', views.courses_by_category, name='courses_by_category'),
 ]

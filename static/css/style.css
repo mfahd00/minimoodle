@@ -40,3 +40,78 @@
 .btn:hover {
     background-color: #1976d2;
 }
+
+.course-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.students-count {
+  font-weight: bold;
+  color: #333;
+}
+
+.course-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.students-count {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.sort-container {
+  margin-bottom: 1rem;
+}
+
+.sort-container label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.sort-container select {
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.navbar-brand img {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.05);
+}
+
+.main-layout {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.navbar-nav .nav-link {
+    transition: color 0.2s;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffd700; /* gold-ish on hover */
+}

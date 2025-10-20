@@ -26,12 +26,17 @@ class Category(models.Model):
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+
+    @property
+    def student_count(self):
+        return self.enrollment_set.count()  # or self.enrollments.count() if related_name added
+
 
 class Lesson(models.Model):
     title = models.CharField(max_length=200)

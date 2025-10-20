@@ -13,7 +13,7 @@
 
 {% if user.is_authenticated %}
   {% if enrolled %}
-    <p><strong>✅ You’re enrolled in this course.</strong></p>
+    <p><strong>You’re enrolled in this course ✅.</strong></p>
   {% else %}
     <form action="{% url 'enroll_course' course.id %}" method="post">
       {% csrf_token %}

@@ -1,42 +1,63 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load custom_tags %}
 {% block content %}
-<h2>Dashboard</h2>
+<h2 class="mb-4">Dashboard</h2>
 
-{% if enrollments %}
-  <div class="dashboard-grid">
-    {% for enrollment in enrollments %}
-      <div class="course-card">
-        <h3>
-          <a href="{% url 'course_detail' enrollment.course.id %}">
-            {{ enrollment.course.title }}
-          </a>
-        </h3>
-
-        {% if enrollment.course.category %}
-          <p><strong>Category:</strong> {{ enrollment.course.category.name }}</p>
-        {% else %}
-          <p><strong>Category:</strong> Uncategorized</p>
-        {% endif %}
-
-        <p><strong>Instructor:</strong> {{ enrollment.course.created_by.username }}</p>
-
-        <!-- Progress bar -->
-        {% with progress_value=progress|get_item:enrollment.course.id %}
-          <div class="progress-bar-container">
-            <div class="progress-bar" style="width: {{ progress_value|default:0 }}%;"></div>
+{% if is_instructor %}
+  <h3>Your Courses</h3>
+  {% if courses %}
+    <ul class="list-group mb-3">
+      {% for course in courses %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <a href="{% url 'course_detail' course.id %}" class="fw-bold">{{ course.title }}</a>
+            <span class="text-muted">({{ course.enrollment_set.count }} students)</span>
           </div>
-          <p>{{ progress_value|default:0 }}% completed</p>
-        {% endwith %}
+          <div>
+            <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+            <a href="{% url 'delete_course' course.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't created any courses yet.</p>
+    <a href="{% url 'create_course' %}" class="btn btn-primary">Create a course</a>
+  {% endif %}
 
-        <a href="{% url 'course_detail' enrollment.course.id %}" class="btn">Go to Course</a>
-      </div>
-    {% endfor %}
-  </div>
 {% else %}
-  <p>You have not enrolled in any courses yet.</p>
-  <p><a href="{% url 'course_list' %}">Browse Courses</a></p>
-{% endif %}
+  <h3>Your Enrolled Courses</h3>
+  {% if enrollments %}
+    <div class="row g-3">
+      {% for enrollment in enrollments %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">
+                <a href="{% url 'course_detail' enrollment.course.id %}">{{ enrollment.course.title }}</a>
+              </h5>
+              {% if enrollment.course.category %}
+                <p class="card-text mb-1"><strong>Category:</strong> {{ enrollment.course.category.name }}</p>
+              {% endif %}
+              <p class="card-text mb-2"><strong>Instructor:</strong> {{ enrollment.course.created_by.username }}</p>
 
+              <!-- Progress bar -->
+              <div class="progress mb-2" style="height:16px;">
+                <div class="progress-bar" role="progressbar" style="width: {{ enrollment.progress }}%;" 
+                     aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+              <p class="mb-3">{{ enrollment.progress }}% completed</p>
+
+              <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-primary mt-auto">Go to Course</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>You have not enrolled in any courses yet.</p>
+    <p><a href="{% url 'course_list' %}" class="btn btn-outline-primary">Browse Courses</a></p>
+  {% endif %}
+{% endif %}
 {% endblock %}

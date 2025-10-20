@@ -5,6 +5,23 @@
 <form method="post" class="form-container">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit" class="btn">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.btn-primary {
+    background-color: #007bff;  /* Blue color */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+</style>
 {% endblock %}

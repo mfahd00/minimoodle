@@ -1,14 +1,68 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<h2>{{ page_title }}</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+    <h3 class="text-center mb-4">Login</h3>
 
-<form method="post" class="form-container">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn">Submit</button>
-</form>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" id="loginTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if show_tab != 'instructor' %}active{% endif %}" 
+                id="student-tab" 
+                data-bs-toggle="tab" 
+                data-bs-target="#student" 
+                type="button" role="tab">Student</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if show_tab == 'instructor' %}active{% endif %}" 
+                id="instructor-tab" 
+                data-bs-toggle="tab" 
+                data-bs-target="#instructor" 
+                type="button" role="tab">Instructor</button>
+      </li>
+    </ul>
 
-<p>
-  Don't have an account? <a href="{% url 'register' %}">Register here</a>.
-</p>
+    <div class="tab-content">
+      <!-- Student Login -->
+      <div class="tab-pane fade {% if show_tab != 'instructor' %}show active{% endif %}" id="student" role="tabpanel">
+        {% if student_error %}
+          <div class="alert alert-warning">{{ student_error }}</div>
+        {% endif %}
+        <form method="POST" action="{% url 'login_student' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="student_username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="student_username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="student_password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="student_password" name="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login as Student</button>
+        </form>
+      </div>
+
+      <!-- Instructor Login -->
+      <div class="tab-pane fade {% if show_tab == 'instructor' %}show active{% endif %}" id="instructor" role="tabpanel">
+        {% if instructor_error %}
+          <div class="alert alert-warning">{{ instructor_error }}</div>
+        {% endif %}
+        <form method="POST" action="{% url 'login_instructor' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="instructor_username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="instructor_username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="instructor_password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="instructor_password" name="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login as Instructor</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
