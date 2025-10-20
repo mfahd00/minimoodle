@@ -3,31 +3,40 @@
 <h2>{{ course.title }}</h2>
 <p>{{ course.description }}</p>
 
+<p><strong>Category:</strong>
+  {% if course.category %}
+    {{ course.category.name }}
+  {% else %}
+    Uncategorized
+  {% endif %}
+</p>
+
 {% if user.is_authenticated %}
   {% if enrolled %}
     <p><strong>✅ You’re enrolled in this course.</strong></p>
   {% else %}
     <form action="{% url 'enroll_course' course.id %}" method="post">
       {% csrf_token %}
-      <button type="submit">Enroll Now</button>
+      <button type="submit" class="btn btn-success">Enroll Now</button>
     </form>
   {% endif %}
 {% else %}
   <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to enroll.</p>
 {% endif %}
 
-{% if user.is_authenticated and user == course.created_by %}
-  <p><a href="{% url 'create_lesson' course.id %}">➕ Add Lesson</a></p>
+{% if user == course.created_by %}
+  <a href="{% url 'create_lesson' course.id %}" class="btn">➕ Add Lesson</a>
+  <a href="{% url 'edit_course' course.id %}" class="btn">✏️ Edit Course</a>
+  <a href="{% url 'delete_course' course.id %}" class="btn btn-danger">🗑️ Delete Course</a>
 {% endif %}
 
 <h3>Lessons</h3>
 <ul>
   {% for lesson in lessons %}
-    <li class="course-card">
-      <strong>{{ lesson.title }}</strong><br>
-      {{ lesson.content|truncatewords:25 }}
+    <li>
+      <strong>{{ lesson.title }}</strong> - {{ lesson.content|truncatewords:25 }}
       {% if lesson.video_url %}
-        <div><a href="{{ lesson.video_url }}" target="_blank" class="btn">Watch Video</a></div>
+        <a href="{{ lesson.video_url }}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a>
       {% endif %}
     </li>
   {% empty %}

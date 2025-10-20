@@ -5,7 +5,9 @@ from courses import views as course_views
 from django.contrib.auth import views as auth_views
 
 def home(request):
-    return render(request, 'index.html')
+    from courses.models import Course
+    latest_courses = Course.objects.all()[:6]
+    return render(request, 'index.html', {'latest_courses': latest_courses})
 
 urlpatterns = [
     path('admin/', admin.site.urls),

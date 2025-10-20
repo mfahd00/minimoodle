@@ -1,12 +1,10 @@
 from django import forms
-from .models import Course
-from .models import Lesson
-
+from .models import Course, Lesson
 
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'category']
 
 class LessonForm(forms.ModelForm):
     class Meta:

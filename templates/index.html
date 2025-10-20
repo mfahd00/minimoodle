@@ -1,6 +1,36 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Welcome to MiniMoodle</h2>
-<p>A simple learning platform built with Django.</p>
-<a href="{% url 'course_list' %}" class="btn">Browse Courses</a>
+<h2>Welcome to MiniMoodle!</h2>
+<p>Your one-stop platform to create, enroll, and learn courses online.</p>
+
+<h3>Latest Courses</h3>
+<div class="row">
+  {% for course in latest_courses %}
+    <div class="col-md-4">
+      <div class="course-card">
+        <h4><a href="{% url 'course_detail' course.id %}">{{ course.title }}</a></h4>
+        <p>{{ course.description|truncatewords:20 }}</p>
+        {% if course.category %}
+          <p><strong>Category:</strong> {{ course.category.name }}</p>
+        {% endif %}
+        <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">View Course</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No courses available yet.</p>
+  {% endfor %}
+</div>
+
+<hr>
+
+<h3>Browse by Category</h3>
+<ul>
+  {% for category in categories %}
+    <li><a href="{% url 'course_list' %}?category={{ category.id }}">{{ category.name }}</a></li>
+  {% empty %}
+    <p>No categories added yet.</p>
+  {% endfor %}
+</ul>
+
 {% endblock %}
