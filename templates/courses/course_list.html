@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Available Courses</h2>
-
-{% for course in courses %}
-  <div class="course-card">
-    <h3><a href="{% url 'course_detail' course.id %}">{{ course.title }}</a></h3>
-    <p>{{ course.description|truncatewords:25 }}</p>
-    <small>Created by: {{ course.created_by.username }}</small>
-  </div>
-{% empty %}
-  <p>No courses available.</p>
-{% endfor %}
+<h2>All Courses</h2>
+<div class="row">
+  {% for course in courses %}
+    <div class="col-md-4">
+      <div class="course-card">
+        <h4>{{ course.title }}</h4>
+        <p>{{ course.description|truncatewords:20 }}</p>
+        <a href="{% url 'course_detail' course.id %}" class="btn">View Course</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No courses available.</p>
+  {% endfor %}
+</div>
 {% endblock %}

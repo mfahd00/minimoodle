@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-# Each course is created by an instructor (a User)
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -12,7 +13,6 @@ class Course(models.Model):
         return self.title
 
 
-# Each lesson belongs to a specific course
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
     title = models.CharField(max_length=200)
@@ -27,14 +27,30 @@ class Lesson(models.Model):
         return f"{self.course.title} - {self.title}"
 
 
-# Connect users to the courses they’re enrolled in
 class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('student', 'course')  # one enrollment per student/course
+        unique_together = ('student', 'course') 
 
     def __str__(self):
         return f"{self.student.username} enrolled in {self.course.title}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_instructor = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

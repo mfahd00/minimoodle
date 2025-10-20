@@ -16,6 +16,10 @@
   <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to enroll.</p>
 {% endif %}
 
+{% if user.is_authenticated and user == course.created_by %}
+  <p><a href="{% url 'create_lesson' course.id %}">➕ Add Lesson</a></p>
+{% endif %}
+
 <h3>Lessons</h3>
 <ul>
   {% for lesson in lessons %}
