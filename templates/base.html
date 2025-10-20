@@ -12,9 +12,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{% url 'home' %}">
-  <img src="{% static 'images/login-logo.jpeg' %}" alt="LAP Logo" width="40" height="40" class="me-2 rounded-circle">
-  LAP
-</a>
+      <img src="{% static 'images/login-logo.jpeg' %}" alt="LAP Logo" width="40" height="40" class="me-2 rounded-circle">
+      LAP
+    </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
@@ -23,34 +23,41 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'dashboard' %}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'course_list' %}">Courses</a>
-        </li>
-        {% if user.profile.is_instructor %}
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'create_course' %}">Create Course</a>
-        </li>
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'logout' %}">Logout</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold text-white" href="{% url 'dashboard' %}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold text-white" href="{% url 'course_list' %}">Courses</a>
+          </li>
+          {% if user.profile.is_instructor %}
+          <li class="nav-item">
+            <a class="nav-link fw-semibold text-white" href="{% url 'create_course' %}">Create Course</a>
+          </li>
+          {% endif %}
+
+          <!-- ✅ Perfectly matching Logout -->
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+              {% csrf_token %}
+              <a href="#" class="nav-link fw-semibold text-white"
+                 onclick="event.preventDefault(); this.closest('form').submit();">
+                Logout
+              </a>
+            </form>
+          </li>
+
         {% else %}
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link fw-semibold text-white" href="{% url 'register' %}">Register</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold text-white" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold text-white" href="{% url 'register' %}">Register</a>
+          </li>
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
-
-
 
 <div class="container mt-4">
     {% block content %}{% endblock %}
