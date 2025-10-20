@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Welcome to MiniMoodle</h2>
+<p>A simple learning platform built with Django.</p>
+<a href="{% url 'course_list' %}" class="btn">Browse Courses</a>
+{% endblock %}

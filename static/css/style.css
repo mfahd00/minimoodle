@@ -1,0 +1,105 @@
+
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #f5f6fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #2d3436;
+  color: #fff;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+header h1 a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav a {
+  color: #dfe6e9;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #00cec9;
+}
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button, .btn {
+  background-color: #0984e3;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: #74b9ff;
+}
+
+.course-card {
+  background: #f1f2f6;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #dcdde1;
+  transition: 0.2s ease;
+}
+
+.course-card:hover {
+  background: #dfe6e9;
+}
+
+.course-card h3 {
+  margin: 0 0 8px;
+}
+
+.course-card a {
+  color: #2d3436;
+  text-decoration: none;
+}
+
+.course-card a:hover {
+  text-decoration: underline;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input[type=text], input[type=password], input[type=email] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}

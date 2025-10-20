@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Available Courses</h2>
+
+{% for course in courses %}
+  <div class="course-card">
+    <h3><a href="{% url 'course_detail' course.id %}">{{ course.title }}</a></h3>
+    <p>{{ course.description|truncatewords:25 }}</p>
+    <small>Created by: {{ course.created_by.username }}</small>
+  </div>
+{% empty %}
+  <p>No courses available.</p>
+{% endfor %}
+{% endblock %}
