@@ -1,70 +1,90 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}All Courses | LAP{% endblock %}
+
 {% block content %}
-<h2 class="mb-4">Courses</h2>
+<div class="container py-4">
 
-<!-- Sorting options -->
-<div class="mb-3">
-  <span>Sort by: </span>
-  <a href="?sort=popular" class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">Popular</a>
-  <a href="?sort=newest" class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'newest' %}active{% endif %}">Newest</a>
-  <a href="?sort=oldest" class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'oldest' %}active{% endif %}">Oldest</a>
-</div>
+  <!-- Header + Sorting -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-light">📘 All Courses</h2>
 
-<div class="row g-3">
-  {% for course in page_obj %}
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">
-            <a href="{% url 'course_detail' course.id %}">{{ course.title }}</a>
+    <div class="sort-options">
+      <span class="text-light me-2">Sort by:</span>
+      <a href="?sort=popular"
+         class="btn btn-sm btn-outline-light {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">Popular</a>
+      <a href="?sort=newest"
+         class="btn btn-sm btn-outline-light {% if request.GET.sort == 'newest' %}active{% endif %}">Newest</a>
+      <a href="?sort=oldest"
+         class="btn btn-sm btn-outline-light {% if request.GET.sort == 'oldest' %}active{% endif %}">Oldest</a>
+    </div>
+  </div>
+
+  <!-- Course Cards -->
+  <div class="row g-4">
+    {% for course in page_obj %}
+      <div class="col-md-6 col-lg-4">
+        <div class="course-card h-100 p-4 d-flex flex-column">
+          <h5 class="fw-bold text-info mb-2">
+            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-info">
+              {{ course.title }}
+            </a>
           </h5>
-          {% if course.category %}
-            <p class="card-text mb-1"><strong>Category:</strong> {{ course.category.name }}</p>
-          {% endif %}
-          <p class="card-text mb-2"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
-          <p class="mb-2"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
 
-          <a href="{% url 'course_detail' course.id %}" class="btn btn-primary mt-auto">View Course</a>
+          {% if course.category %}
+            <p class="text-light small mb-1"><strong>Category:</strong> {{ course.category.name }}</p>
+          {% endif %}
+          <p class="text-light small mb-1"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
+          <p class="text-light small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
+
+          <div class="mt-auto">
+            <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-light btn-sm w-100">View Course</a>
+          </div>
         </div>
       </div>
-    </div>
-  {% empty %}
-    <p>No courses found.</p>
-  {% endfor %}
-</div>
+    {% empty %}
+      <p class="text-secondary">No courses found.</p>
+    {% endfor %}
+  </div>
 
-<!-- Pagination -->
-<div class="mt-4">
-  <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-      {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Previous</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled"><span class="page-link">Previous</span></li>
-      {% endif %}
-
-      {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-          <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-        {% else %}
+  <!-- Pagination -->
+  <div class="mt-5">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+              Previous
+            </a>
           </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Previous</span></li>
         {% endif %}
-      {% endfor %}
 
-      {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Next</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled"><span class="page-link">Next</span></li>
-      {% endif %}
-    </ul>
-  </nav>
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                {{ num }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+              Next
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
 </div>
-
 {% endblock %}

@@ -35,7 +35,7 @@ class Course(models.Model):
 
     @property
     def student_count(self):
-        return self.enrollment_set.count()  # or self.enrollments.count() if related_name added
+        return self.enrollment_set.count()  
 
 
 class Lesson(models.Model):
@@ -55,3 +55,26 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title}"
+
+class Assignment(models.Model):
+    course = models.ForeignKey(Course, related_name='assignments', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    due_date = models.DateTimeField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.course.title})"
+
+
+class Submission(models.Model):
+    assignment = models.ForeignKey(Assignment, related_name='submissions', on_delete=models.CASCADE)
+    student = models.ForeignKey(User, related_name='submissions', on_delete=models.CASCADE)
+    submitted_file = models.FileField(upload_to='submissions/')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    feedback = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.student.username} - {self.assignment.title}"

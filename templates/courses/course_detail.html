@@ -25,11 +25,12 @@
 {% endif %}
 
 {% if user == course.created_by %}
-  <a href="{% url 'create_lesson' course.id %}" class="btn">➕ Add Lesson</a>
-  <a href="{% url 'edit_course' course.id %}" class="btn">✏️ Edit Course</a>
+  <a href="{% url 'create_lesson' course.id %}" class="btn btn-primary">➕ Add Lesson</a>
+  <a href="{% url 'edit_course' course.id %}" class="btn btn-warning">✏️ Edit Course</a>
   <a href="{% url 'delete_course' course.id %}" class="btn btn-danger">🗑️ Delete Course</a>
 {% endif %}
 
+<hr>
 <h3>Lessons</h3>
 <ul>
   {% for lesson in lessons %}
@@ -43,4 +44,28 @@
     <p>No lessons yet.</p>
   {% endfor %}
 </ul>
+
+<hr>
+<h3>Assignments</h3>
+<ul>
+  {% for assignment in course.assignments.all %}
+    <li>
+      <strong>{{ assignment.title }}</strong> - Due: {{ assignment.due_date|date:"Y-m-d H:i" }}
+      {% if user.is_authenticated %}
+        {% if user.profile.is_instructor and user == course.created_by %}
+          <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-sm btn-secondary">📂 View Submissions</a>
+        {% else %}
+          <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-sm btn-primary">Submit</a>
+        {% endif %}
+      {% endif %}
+    </li>
+  {% empty %}
+    <p>No assignments yet.</p>
+  {% endfor %}
+</ul>
+
+{% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
+  <a href="{% url 'create_assignment' course.id %}" class="btn btn-success mt-2">➕ Add Assignment</a>
+{% endif %}
+
 {% endblock %}

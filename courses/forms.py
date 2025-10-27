@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Lesson
+from .models import Course, Lesson, Assignment, Submission
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -33,3 +33,17 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')
+
+
+class AssignmentForm(forms.ModelForm):
+    class Meta:
+        model = Assignment
+        fields = ['title', 'description', 'due_date']
+        widgets = {
+            'due_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+class SubmissionForm(forms.ModelForm):
+    class Meta:
+        model = Submission
+        fields = ['submitted_file']

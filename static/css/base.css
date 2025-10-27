@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Urbanist', 'Inter', sans-serif;
+}
+
+/* ===============================
+   🌟 Consistent Navbar Design
+   =============================== */
+.custom-navbar {
+  background-color: #1a4a8c !important; /* toned-down deep navy */
+  color: #fff !important;
+  padding: 0.75rem 1.5rem;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1030;
+  transition: top 0.6s ease, background-color 0.4s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-navbar .navbar-brand img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 6px;
+}
+
+.custom-navbar .nav-link {
+  color: #fff !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin-left: 1rem;
+  transition: color 0.3s ease;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #c7dbff !important;
+}
+
+/* 🌙 Theme Switcher */
+.theme-switch {
+  position: relative;
+  width: 55px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  transition: all 0.4s ease;
+}
+
+.theme-switch .switch-circle {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+.theme-switch.active .switch-circle {
+  left: calc(100% - 25px);
+}
+
+.theme-switch .icon {
+  font-size: 14px;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* ===============================
+   🌈 Premium Form Design
+   =============================== */
+.form-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06),
+              0 8px 32px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  transition: all 0.4s ease;
+}
+
+.form-container h2 {
+  font-weight: 700;
+  font-size: 1.75rem;
+  text-align: center;
+  margin-bottom: 1.8rem;
+  background: linear-gradient(90deg, #1a4a8c, #2a7df5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--bs-body-color);
+  transition: all 0.35s ease;
+  margin-bottom: 1.2rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus {
+  border-color: #1a4a8c;
+  outline: none;
+  box-shadow: 0 0 10px rgba(26, 74, 140, 0.3);
+  background: rgba(26, 74, 140, 0.05);
+}
+
+.form-container textarea {
+  min-height: 140px;
+  line-height: 1.6;
+  resize: none;
+  scrollbar-width: thin;
+}
+
+.form-container .btn {
+  background: linear-gradient(135deg, #1a4a8c, #2a7df5);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0.85rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  letter-spacing: 0.4px;
+}
+
+.form-container .btn:hover {
+  background: linear-gradient(135deg, #173d73, #2469d8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 74, 140, 0.3);
+}
+
+/* 📱 Responsive */
+@media (max-width: 576px) {
+  .form-container {
+    padding: 1.8rem;
+    margin: 1.5rem;
+    border-radius: 14px;
+  }
+  .form-container h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ================================================
+   🔵 Global Button Styling (matches navbar/footer)
+   ================================================ */
+.btn,
+button,
+input[type="submit"] {
+  background: linear-gradient(135deg, #0a58ca, #084bb5); /* Same as navbar/footer */
+  color: #fff !important;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(10, 88, 202, 0.25);
+}
+
+.btn:hover,
+button:hover,
+input[type="submit"]:hover {
+  background: linear-gradient(135deg, #084bb5, #063d99);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 88, 202, 0.35);
+}
+
+.btn:disabled,
+button:disabled,
+input[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.course-card {
+  background: var(--bs-body-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border-color: var(--bs-primary);
+}
+
+.course-link {
+  text-decoration: none;
+  color: var(--bs-body-color);
+  font-weight: 600;
+}
+
+.course-link:hover {
+  color: var(--bs-primary);
+}
+
+.empty-state {
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+

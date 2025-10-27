@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Assignments for {{ course.title }}</h2>
+<ul>
+  {% for a in assignments %}
+    <li>
+      <a href="{% url 'submit_assignment' a.id %}">{{ a.title }}</a>
+      (Due: {{ a.due_date|date:"Y-m-d H:i" }})
+    </li>
+  {% empty %}
+    <p>No assignments yet.</p>
+  {% endfor %}
+</ul>
+{% if user.profile.is_instructor and course.created_by == user %}
+  <a href="{% url 'create_assignment' course.id %}" class="btn btn-success">+ Add Assignment</a>
+{% endif %}
+{% endblock %}

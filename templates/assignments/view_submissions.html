@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Submissions for {{ assignment.title }}</h2>
+<table class="table">
+    <tr>
+        <th>Student</th>
+        <th>File</th>
+        <th>Submitted At</th>
+    </tr>
+    {% for sub in submissions %}
+    <tr>
+        <td>{{ sub.student.username }}</td>
+        <td><a href="{{ sub.submitted_file.url }}">Download</a></td>
+        <td>{{ sub.submitted_at }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No submissions yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

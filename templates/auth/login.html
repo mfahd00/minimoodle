@@ -3,30 +3,37 @@
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-    <h3 class="text-center mb-4">Login</h3>
+  <div class="card shadow p-4 login-card" style="max-width: 420px; width: 100%;">
+    <h3 class="text-center mb-4 fw-semibold">Login</h3>
 
     <!-- Tabs -->
-    <ul class="nav nav-tabs mb-3" id="loginTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link {% if show_tab != 'instructor' %}active{% endif %}" 
-                id="student-tab" 
-                data-bs-toggle="tab" 
-                data-bs-target="#student" 
-                type="button" role="tab">Student</button>
+    <ul class="nav nav-tabs mb-3" id="loginTab" role="tablist" style="border-bottom: 2px solid var(--bs-border-color);">
+      <li class="nav-item flex-fill text-center" role="presentation">
+        <button class="nav-link w-100 {% if show_tab != 'instructor' %}active{% endif %}"
+                id="student-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#student"
+                type="button" role="tab"
+                aria-controls="student" aria-selected="true">
+          👨‍🎓 Student
+        </button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link {% if show_tab == 'instructor' %}active{% endif %}" 
-                id="instructor-tab" 
-                data-bs-toggle="tab" 
-                data-bs-target="#instructor" 
-                type="button" role="tab">Instructor</button>
+      <li class="nav-item flex-fill text-center" role="presentation">
+        <button class="nav-link w-100 {% if show_tab == 'instructor' %}active{% endif %}"
+                id="instructor-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#instructor"
+                type="button" role="tab"
+                aria-controls="instructor" aria-selected="false">
+          👩‍🏫 Instructor
+        </button>
       </li>
     </ul>
 
+    <!-- Tab Content -->
     <div class="tab-content">
       <!-- Student Login -->
-      <div class="tab-pane fade {% if show_tab != 'instructor' %}show active{% endif %}" id="student" role="tabpanel">
+      <div class="tab-pane fade {% if show_tab != 'instructor' %}show active{% endif %}" id="student" role="tabpanel" aria-labelledby="student-tab">
         {% if student_error %}
           <div class="alert alert-warning">{{ student_error }}</div>
         {% endif %}
@@ -45,7 +52,7 @@
       </div>
 
       <!-- Instructor Login -->
-      <div class="tab-pane fade {% if show_tab == 'instructor' %}show active{% endif %}" id="instructor" role="tabpanel">
+      <div class="tab-pane fade {% if show_tab == 'instructor' %}show active{% endif %}" id="instructor" role="tabpanel" aria-labelledby="instructor-tab">
         {% if instructor_error %}
           <div class="alert alert-warning">{{ instructor_error }}</div>
         {% endif %}
@@ -65,4 +72,21 @@
     </div>
   </div>
 </div>
+
+<!-- Bootstrap JS (required for tabs to work) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Ensure tab switching works fine
+    const triggerTabList = document.querySelectorAll('#loginTab button');
+    triggerTabList.forEach(triggerEl => {
+      const tabTrigger = new bootstrap.Tab(triggerEl);
+      triggerEl.addEventListener('click', event => {
+        event.preventDefault();
+        tabTrigger.show();
+      });
+    });
+  });
+</script>
 {% endblock %}

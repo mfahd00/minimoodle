@@ -2,18 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.db.models import Count
-from .models import Course, Lesson, Enrollment, Profile, Category
-from .forms import CourseForm, LessonForm, CustomUserCreationForm
+from .models import Course, Lesson, Enrollment, Profile, Category, Assignment, Submission
+from .forms import CourseForm, LessonForm, CustomUserCreationForm, AssignmentForm, SubmissionForm
 from django.contrib.auth.models import User
-
-# -----------------------------
-# AUTH
-# -----------------------------
-# views.py
-
 
 def register_student(request):
     if request.method == 'POST':
@@ -46,11 +41,6 @@ def choose_registration(request):
     return render(request, 'auth/choose_registration.html', {
         'page_title': 'Register'
     })
-
-
-
-
-# views.py
 
 def login_student(request):
     error = None
@@ -94,13 +84,9 @@ def logout_view(request):
     logout(request)
     return redirect('login_student')
 
-
-# -----------------------------
-# HOME / COURSES
-# -----------------------------
 def home(request):
     latest_courses = Course.objects.all()[:5]
-    return render(request, 'home.html', {'latest_courses': latest_courses})
+    return render(request, 'index.html', {'latest_courses': latest_courses})
 
 
 def course_list(request):
@@ -146,10 +132,6 @@ def enroll_course(request, course_id):
     Enrollment.objects.get_or_create(student=request.user, course=course)
     return redirect('course_detail', course_id=course.id)
 
-
-# -----------------------------
-# DASHBOARD
-# -----------------------------
 @login_required
 def dashboard(request):
     if request.user.profile.is_instructor:
@@ -169,12 +151,6 @@ def dashboard(request):
             'enrollments': enrollments
         })
 
-
-
-
-# -----------------------------
-# INSTRUCTOR
-# -----------------------------
 @login_required
 def create_course(request):
     if not request.user.profile.is_instructor:
@@ -253,3 +229,73 @@ from django.shortcuts import render
 
 def login_page(request):
     return render(request, 'auth/login.html')
+
+
+@login_required
+def create_assignment(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if not request.user.profile.is_instructor or course.created_by != request.user:
+        return HttpResponseForbidden("Only the instructor of this course can create assignments.")
+    
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST)
+        if form.is_valid():
+            assignment = form.save(commit=False)
+            assignment.course = course
+            assignment.created_by = request.user
+            assignment.save()
+            return redirect('course_detail', course_id=course.id)
+    else:
+        form = AssignmentForm()
+
+    return render(request, 'assignments/create_assignment.html', {
+        'form': form,
+        'course': course,
+        'page_title': 'Create Assignment'
+    })
+
+
+@login_required
+def assignment_list(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    assignments = course.assignments.all()
+    return render(request, 'assignments/assignment_list.html', {
+        'course': course,
+        'assignments': assignments,
+    })
+
+
+def submit_assignment(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+
+    if request.method == 'POST':
+        form = SubmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.assignment = assignment
+            submission.student = request.user
+            submission.save()
+            messages.success(request, "✅ Assignment submitted successfully!")
+            return redirect('course_detail', course_id=assignment.course.id)
+        else:
+            messages.error(request, "❌ Submission failed. Please check the form and try again.")
+    else:
+        form = SubmissionForm()
+
+    return render(request, 'assignments/submit_assignment.html', {
+        'form': form,
+        'assignment': assignment
+    })
+
+@login_required
+def view_submissions(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    if not request.user.profile.is_instructor or assignment.created_by != request.user:
+        return HttpResponseForbidden("Only the instructor can view submissions.")
+    
+    submissions = assignment.submissions.all()
+    return render(request, 'assignments/view_submissions.html', {
+        'assignment': assignment,
+        'submissions': submissions
+    })
+

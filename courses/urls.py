@@ -22,4 +22,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('courses/category/<int:category_id>/', views.courses_by_category, name='courses_by_category'),
+    path('courses/<int:course_id>/assignments/', views.assignment_list, name='assignment_list'),
+    path('courses/<int:course_id>/assignments/create/', views.create_assignment, name='create_assignment'),
+    path('assignments/<int:assignment_id>/submit/', views.submit_assignment, name='submit_assignment'),
+    path('assignments/<int:assignment_id>/submissions/', views.view_submissions, name='view_submissions'),
 ]

@@ -1,36 +1,82 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | LAP{% endblock %}
 
 {% block content %}
-<h2>Welcome to MiniMoodle!</h2>
-<p>Your one-stop platform to create, enroll, and learn courses online.</p>
 
-<h3>Latest Courses</h3>
-<div class="row">
-  {% for course in latest_courses %}
-    <div class="col-md-4">
-      <div class="course-card">
-        <h4><a href="{% url 'course_detail' course.id %}">{{ course.title }}</a></h4>
-        <p>{{ course.description|truncatewords:20 }}</p>
-        {% if course.category %}
-          <p><strong>Category:</strong> {{ course.category.name }}</p>
-        {% endif %}
-        <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">View Course</a>
-      </div>
-    </div>
-  {% empty %}
-    <p>No courses available yet.</p>
-  {% endfor %}
+<!-- 🌙 Hero Section -->
+<div class="p-5 mb-5 hero text-center text-light">
+  <div class="container py-5">
+    <h1 class="display-5 fw-bold text-light">Welcome to <span class="text-info">LAP</span>!</h1>
+    <p class="fs-5 text-secondary">Empowering learning with simplicity and style.</p>
+
+    {% if not user.is_authenticated %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg mt-3">Join Now</a>
+    {% else %}
+      <a href="{% url 'course_list' %}" class="btn btn-success btn-lg mt-3">Explore Courses</a>
+    {% endif %}
+  </div>
 </div>
 
-<hr>
+<!-- 🎓 Latest Courses -->
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-light">   Latest Courses</h3>
+    <a href="{% url 'course_list' %}" class="btn btn-outline-light btn-sm px-3">View All</a>
+  </div>
 
-<h3>Browse by Category</h3>
-<ul>
-  {% for category in categories %}
-    <li><a href="{% url 'course_list' %}?category={{ category.id }}">{{ category.name }}</a></li>
-  {% empty %}
-    <p>No categories added yet.</p>
-  {% endfor %}
-</ul>
+  <div class="row g-4">
+    {% for course in latest_courses %}
+      <div class="col-md-6">
+        <div class="course-card h-100 d-flex align-items-center p-4">
+          <div class="flex-grow-1">
+            <h5 class="fw-bold text-info mb-2">
+              <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-info">
+                {{ course.title }}
+              </a>
+            </h5>
+            <p class="text-secondary small mb-3">{{ course.description|truncatewords:25 }}</p>
+            {% if course.category %}
+              <span class="badge bg-info text-dark">{{ course.category.name }}</span>
+            {% else %}
+              <span class="badge bg-secondary">Uncategorized</span>
+            {% endif %}
+          </div>
+          <div class="ms-3 text-end">
+            <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-light btn-sm">View</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-secondary">No courses available yet.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<hr class="text-secondary my-5" style="opacity: 0.15;">
+
+<!-- 🏷️ Categories -->
+<section class="mb-5">
+  <h3 class="fw-bold text-light mb-4 text-center"> Browse by Category</h3>
+  <div class="row g-4 justify-content-center">
+    {% for category in categories %}
+      <div class="col-md-3 col-sm-6 col-10">
+        <div class="course-card h-100 text-center p-4">
+          <div class="card-body">
+            <div class="mb-3">
+              <i class="bi bi-folder-fill fs-3 text-info"></i>
+            </div>
+            <h5 class="fw-semibold text-light mb-2">{{ category.name }}</h5>
+            <a href="{% url 'courses_by_category' category.id %}" 
+               class="btn btn-outline-light btn-sm mt-2 px-3">View Courses</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-secondary text-center">No categories added yet.</p>
+    {% endfor %}
+  </div>
+</section>
 
 {% endblock %}
