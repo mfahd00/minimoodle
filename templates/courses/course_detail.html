@@ -1,71 +1,101 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>{{ course.title }}</h2>
-<p>{{ course.description }}</p>
+<div class="container py-5">
 
-<p><strong>Category:</strong>
-  {% if course.category %}
-    {{ course.category.name }}
-  {% else %}
-    Uncategorized
-  {% endif %}
-</p>
+  <!-- 🌟 Course Header -->
+  <div class="overlay-box p-4 mb-5">
+    <h2 class="section-heading mb-3">{{ course.title }}</h2>
+    <p class="fs-5 mb-3">{{ course.description }}</p>
 
-{% if user.is_authenticated %}
-  {% if enrolled %}
-    <p><strong>You’re enrolled in this course ✅.</strong></p>
-  {% else %}
-    <form action="{% url 'enroll_course' course.id %}" method="post">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-success">Enroll Now</button>
-    </form>
-  {% endif %}
-{% else %}
-  <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to enroll.</p>
-{% endif %}
-
-{% if user == course.created_by %}
-  <a href="{% url 'create_lesson' course.id %}" class="btn btn-primary">➕ Add Lesson</a>
-  <a href="{% url 'edit_course' course.id %}" class="btn btn-warning">✏️ Edit Course</a>
-  <a href="{% url 'delete_course' course.id %}" class="btn btn-danger">🗑️ Delete Course</a>
-{% endif %}
-
-<hr>
-<h3>Lessons</h3>
-<ul>
-  {% for lesson in lessons %}
-    <li>
-      <strong>{{ lesson.title }}</strong> - {{ lesson.content|truncatewords:25 }}
-      {% if lesson.video_url %}
-        <a href="{{ lesson.video_url }}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a>
+    <p class="mb-4">
+      <strong>Category:</strong>
+      {% if course.category %}
+        <span class="badge badge-cat ms-2">{{ course.category.name }}</span>
+      {% else %}
+        <span class="badge badge-uncat ms-2">Uncategorized</span>
       {% endif %}
-    </li>
-  {% empty %}
-    <p>No lessons yet.</p>
-  {% endfor %}
-</ul>
+    </p>
 
-<hr>
-<h3>Assignments</h3>
-<ul>
-  {% for assignment in course.assignments.all %}
-    <li>
-      <strong>{{ assignment.title }}</strong> - Due: {{ assignment.due_date|date:"Y-m-d H:i" }}
-      {% if user.is_authenticated %}
-        {% if user.profile.is_instructor and user == course.created_by %}
-          <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-sm btn-secondary">📂 View Submissions</a>
-        {% else %}
-          <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-sm btn-primary">Submit</a>
-        {% endif %}
+    {% if user.is_authenticated %}
+      {% if enrolled %}
+        <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
+      {% else %}
+        <form action="{% url 'enroll_course' course.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary px-4">Enroll Now</button>
+        </form>
       {% endif %}
-    </li>
-  {% empty %}
-    <p>No assignments yet.</p>
-  {% endfor %}
-</ul>
+    {% else %}
+      <p>
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-info px-4">
+          Login to Enroll
+        </a>
+      </p>
+    {% endif %}
 
-{% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
-  <a href="{% url 'create_assignment' course.id %}" class="btn btn-success mt-2">➕ Add Assignment</a>
-{% endif %}
+    {% if user == course.created_by %}
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="{% url 'create_lesson' course.id %}" class="btn btn-outline-success">➕ Add Lesson</a>
+        <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-warning">✏️ Edit</a>
+        <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-danger">🗑️ Delete</a>
+      </div>
+    {% endif %}
+  </div>
 
+  <!-- 📘 Lessons -->
+  <div class="overlay-box p-4 mb-4">
+    <h4 class="section-heading mb-3">📘 Lessons</h4>
+    {% if lessons %}
+      <ul class="list-group list-group-flush">
+        {% for lesson in lessons %}
+          <li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              <strong class="course-title">{{ lesson.title }}</strong><br>
+              <small class="text-muted">{{ lesson.content|truncatewords:25 }}</small>
+            </div>
+            {% if lesson.video_url %}
+              <a href="{{ lesson.video_url }}" target="_blank" class="btn btn-outline-info btn-sm">🎥 Watch</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted mb-0">No lessons yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- 📝 Assignments -->
+  <div class="overlay-box p-4">
+    <h4 class="section-heading mb-3">📝 Assignments</h4>
+    {% if course.assignments.all %}
+      <ul class="list-group list-group-flush">
+        {% for assignment in course.assignments.all %}
+          <li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              <strong class="course-title">{{ assignment.title }}</strong><br>
+              <small class="text-muted">Due: {{ assignment.due_date|date:"Y-m-d H:i" }}</small>
+            </div>
+
+            {% if user.is_authenticated %}
+              {% if user.profile.is_instructor and user == course.created_by %}
+                <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-outline-secondary btn-sm">📂 View</a>
+              {% else %}
+                <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-outline-info btn-sm">Submit</a>
+              {% endif %}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted mb-0">No assignments yet.</p>
+    {% endif %}
+  </div>
+
+  {% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
+    <div class="text-end mt-3">
+      <a href="{% url 'create_assignment' course.id %}" class="btn btn-success">➕ Add Assignment</a>
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}

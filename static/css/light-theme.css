@@ -1,9 +1,7 @@
-/* ================================
-   ☀️ LIGHT THEME COLORS
-   ================================ */
+
 
 body {
-  background-color: #f8f9fa;
+  background-color: #c8e0f8;
   color: #222;
 }
 
@@ -11,6 +9,7 @@ body {
 .navbar {
   background-color: #ffffff;
   color: #222;
+  border-bottom: 1px solid #ddd;
 }
 
 .navbar .nav-link {
@@ -22,7 +21,7 @@ body {
 }
 
 .navbar-brand {
-  color: #8ab4f8 !important;
+  color: #007bff !important;
 }
 
 /* Buttons */
@@ -30,34 +29,106 @@ body {
   background-color: #007bff;
   color: #fff;
   border: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn:hover {
   background-color: #0056b3;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.btn-outline-info {
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+.btn-outline-info:hover {
+  background-color: #007bff;
+  color: #fff;
 }
 
 /* Cards */
-.card {
+.course-card {
   background-color: #ffffff;
   border: 1px solid #ddd;
   color: #222;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-/* Form Inputs */
-.form-control {
-  background-color: #ffffff;
-  color: #222;
-  border: 1px solid #ccc;
+.course-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 4px rgba(0,123,255,0.25);
+/* Overlay Box */
+.overlay-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 90%;
+  margin: auto;
+  backdrop-filter: blur(6px);
+  transition: box-shadow 0.4s ease;
+}
+
+.overlay-box:hover {
+  box-shadow: 0 10px 35px rgba(0, 123, 255, 0.3);
+}
+
+/* Text & Headings */
+.hero h1 {
+  color: #0057b5;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.section-heading {
+  color: #0057b5;
+}
+
+.section-subheading {
+  color: #000;
+}
+
+.divider {
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Footer */
 footer {
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   color: #333;
-  border-color: rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Course Titles (Latest Courses) */
+.course-title,
+.course-title-link {
+  color: #0057b5; /* Bright theme blue */
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.course-title-link:hover {
+  color: #0056b3;
+  text-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+  text-decoration: none;
+}
+
+.lap-text {
+  color: #000; 
+}
+
+.badge-cat {
+  background-color: #d0e8ff;  /* Soft blue tint */
+  color: #004085;             /* Deep navy text */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.badge-uncat {
+  background-color: #f0f0f0;  /* Neutral gray */
+  color: #555;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }

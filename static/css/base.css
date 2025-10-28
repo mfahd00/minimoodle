@@ -79,42 +79,48 @@ body {
    🌈 Premium Form Design
    =============================== */
 .form-container {
-  max-width: 600px;
-  margin: 3rem auto;
-  padding: 2.5rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.8rem 2rem;
   background: var(--bs-body-bg);
   color: var(--bs-body-color);
-  border-radius: 18px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06),
-              0 8px 32px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.05),
+              0 6px 24px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
   transition: all 0.4s ease;
 }
 
 .form-container h2 {
   font-weight: 700;
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   text-align: center;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.5rem;
   background: linear-gradient(90deg, #1a4a8c, #2a7df5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* 🎯 Grid-based form layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem 1.2rem;
 }
 
 .form-container input,
 .form-container select,
 .form-container textarea {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid rgba(128, 128, 128, 0.25);
-  padding: 0.85rem 1rem;
-  font-size: 1rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.05);
   color: var(--bs-body-color);
-  transition: all 0.35s ease;
-  margin-bottom: 1.2rem;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .form-container input:focus,
@@ -122,46 +128,53 @@ body {
 .form-container textarea:focus {
   border-color: #1a4a8c;
   outline: none;
-  box-shadow: 0 0 10px rgba(26, 74, 140, 0.3);
+  box-shadow: 0 0 8px rgba(26, 74, 140, 0.25);
   background: rgba(26, 74, 140, 0.05);
 }
 
 .form-container textarea {
-  min-height: 140px;
-  line-height: 1.6;
+  grid-column: span 2; /* make textarea span both columns */
+  min-height: 100px;
   resize: none;
-  scrollbar-width: thin;
 }
 
 .form-container .btn {
   background: linear-gradient(135deg, #1a4a8c, #2a7df5);
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  padding: 0.85rem;
+  padding: 0.8rem;
   width: 100%;
   transition: all 0.3s ease;
   letter-spacing: 0.4px;
+  grid-column: span 2; /* full width button */
 }
 
 .form-container .btn:hover {
   background: linear-gradient(135deg, #173d73, #2469d8);
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(26, 74, 140, 0.3);
+  box-shadow: 0 5px 15px rgba(26, 74, 140, 0.25);
 }
 
 /* 📱 Responsive */
 @media (max-width: 576px) {
   .form-container {
-    padding: 1.8rem;
-    margin: 1.5rem;
-    border-radius: 14px;
+    padding: 1.2rem;
+    margin: 1rem;
+    border-radius: 12px;
   }
+
+  .form-grid {
+    grid-template-columns: 1fr; /* single column on small screens */
+  }
+
   .form-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 }
+
+
 
 /* ================================================
    🔵 Global Button Styling (matches navbar/footer)
@@ -197,7 +210,7 @@ input[type="submit"]:disabled {
 
 .course-card {
   background: var(--bs-body-bg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(254, 255, 255, 0.08);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
@@ -225,4 +238,8 @@ input[type="submit"]:disabled {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
 }
+
+/* 🌄 Hero Section Background */
+
+
 

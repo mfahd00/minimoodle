@@ -1,40 +1,37 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static widget_tweaks %}
+{% block title %}Instructor Registration | LAP{% endblock %}
+
 {% block content %}
-{% load widget_tweaks %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+  <div class="form-container shadow-lg p-4" style="max-width: 460px; width: 100%; border-radius: 15px;">
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card p-5 shadow" style="width: 450px; border-radius: 12px;">
-    <h2 class="text-center mb-4">{{ page_title }}</h2>
+    <h2 class="fw-bold text-center mb-4">Instructor Registration</h2>
 
-    <form method="post" id="registrationForm">
+    <form method="post" id="instructorRegistrationForm" novalidate>
       {% csrf_token %}
       
       <div class="mb-3">
-        {{ form.username.label_tag }}
+        <label class="form-label fw-medium">Username</label>
         {{ form.username|add_class:"form-control" }}
-        <div class="form-text text-danger small mt-1" id="usernameHelp"></div>
       </div>
 
       <div class="mb-3">
-        {{ form.email.label_tag }}
+        <label class="form-label fw-medium">Email</label>
         {{ form.email|add_class:"form-control" }}
-        <div class="form-text text-danger small mt-1" id="emailHelp"></div>
       </div>
 
       <div class="mb-3">
-        {{ form.password1.label_tag }}
+        <label class="form-label fw-medium">Password</label>
         {{ form.password1|add_class:"form-control" }}
-        <div class="form-text text-danger small mt-1" id="passwordHelp"></div>
       </div>
 
       <div class="mb-3">
-        {{ form.password2.label_tag }}
+        <label class="form-label fw-medium">Confirm Password</label>
         {{ form.password2|add_class:"form-control" }}
-        <div class="form-text text-danger small mt-1" id="confirmHelp"></div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+      <button type="submit" class="btn w-100 py-2">Register as Instructor</button>
     </form>
 
     <p class="text-center mt-3">
@@ -43,37 +40,88 @@
   </div>
 </div>
 
+<style>
+  /* Common card structure */
+  .form-container h2 {
+    font-weight: 700;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #212529;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #2a7df5;
+    box-shadow: 0 0 8px rgba(42, 125, 245, 0.5);
+  }
+
+  /* Light Mode */
+  body.light-mode .form-label, 
+  body.light-mode p, 
+  body.light-mode a {
+    color: #212529 !important;
+  }
+
+  /* Dark Mode */
+  body.dark-mode .form-label, 
+  body.dark-mode p, 
+  body.dark-mode a {
+    color: #f8f9fa !important;
+  }
+
+  body.dark-mode .form-control {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #f8f9fa;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Placeholders */
+  input::placeholder {
+    color: #6c757d !important;
+  }
+
+  body.dark-mode input::placeholder {
+    color: #d1d1d1 !important;
+  }
+
+  /* Button */
+  .btn {
+    background: linear-gradient(135deg, #0a58ca, #084bb5);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    transition: 0.3s;
+    font-weight: 600;
+  }
+
+  .btn:hover {
+    background: linear-gradient(135deg, #2a7df5, #1a4a8c);
+    box-shadow: 0 3px 12px rgba(42, 125, 245, 0.4);
+  }
+</style>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const password = document.querySelector("#id_password1");
-    const confirm = document.querySelector("#id_password2");
-    const passwordHelp = document.getElementById("passwordHelp");
-    const confirmHelp = document.getElementById("confirmHelp");
+  const form = document.getElementById("instructorRegistrationForm");
+  const pass1 = document.querySelector("#id_password1");
+  const pass2 = document.querySelector("#id_password2");
 
-    password.addEventListener("input", function() {
-        if (password.value.length < 8) {
-            passwordHelp.textContent = "* Password must be at least 8 characters";
-        } else {
-            passwordHelp.textContent = "";
-        }
-    });
-
-    confirm.addEventListener("input", function() {
-        if (confirm.value !== password.value) {
-            confirmHelp.textContent = "* Passwords do not match";
-        } else {
-            confirmHelp.textContent = "";
-        }
-    });
-
-    const form = document.getElementById("registrationForm");
-    form.addEventListener("submit", function(e) {
-        if (password.value.length < 8 || confirm.value !== password.value) {
-            e.preventDefault();
-            alert("Please fix the errors before submitting.");
-        }
-    });
+  form.addEventListener("submit", function(e) {
+    if (pass1 && pass2) {
+      if (pass1.value.length < 8) {
+        alert("Password must be at least 8 characters.");
+        e.preventDefault();
+      } else if (pass1.value !== pass2.value) {
+        alert("Passwords do not match.");
+        e.preventDefault();
+      }
+    }
+  });
 });
 </script>
-
 {% endblock %}
