@@ -9,7 +9,6 @@
 
     <h2 class="fw-bold text-center mb-4">Welcome Back</h2>
 
-    <!-- Tabs -->
     <ul class="nav nav-tabs justify-content-center mb-4 border-0" id="loginTab" role="tablist">
       <li class="nav-item" role="presentation">
         <button
@@ -42,7 +41,6 @@
     </ul>
 
     <div class="tab-content mt-3">
-      <!-- Student Login -->
       <div class="tab-pane fade {% if show_tab != 'instructor' %}show active{% endif %}" id="student" role="tabpanel">
         {% if student_error %}
           <div class="alert alert-warning small">{{ student_error }}</div>
@@ -61,7 +59,7 @@
         </form>
       </div>
 
-      <!-- Instructor Login -->
+
       <div class="tab-pane fade {% if show_tab == 'instructor' %}show active{% endif %}" id="instructor" role="tabpanel">
         {% if instructor_error %}
           <div class="alert alert-warning small">{{ instructor_error }}</div>
@@ -86,7 +84,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
-  /* 🧭 Tabs visible in both themes */
   .nav-tabs .nav-link {
     border: none;
     color: var(--bs-body-color) !important;
@@ -102,7 +99,6 @@
     box-shadow: 0 3px 12px rgba(26, 74, 140, 0.25);
   }
 
-  /* ✅ Explicit color rules */
   body.light-mode .nav-tabs .nav-link {
     color: #212529 !important;
   }
@@ -111,7 +107,6 @@
     color: #f8f9fa !important;
   }
 
-  /* ✅ Fix placeholder visibility */
   input::placeholder {
     color: #6c757d !important;
     opacity: 1 !important;
@@ -122,7 +117,6 @@
     opacity: 1 !important;
   }
 
-  /* ✅ Fix label and text visibility */
   body.light-mode .form-label {
     color: #212529 !important;
   }
@@ -131,7 +125,6 @@
     color: #f8f9fa !important;
   }
 
-  /* ✅ Inputs contrast fix */
   .form-control {
     background-color: rgba(255, 255, 255, 0.9);
     color: #212529;
@@ -148,7 +141,6 @@
     box-shadow: 0 0 8px rgba(42, 125, 245, 0.5);
   }
 
-  /* Buttons visible on both */
   .btn {
     background: linear-gradient(135deg, #0a58ca, #084bb5);
     color: #fff;

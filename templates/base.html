@@ -49,7 +49,7 @@
       font-size: 0.9rem;
       margin-top: auto;
       border-top: 1px solid rgba(255,255,255,0.1);
-      background-color: #1a4a8c; /* toned-down deep blue */
+      background-color: #1a4a8c; 
       color: #fff;
     }
   </style>
@@ -58,8 +58,8 @@
 <style>
 .card {
   border-radius: 12px;
-  background-color: transparent !important; /* Matches page bg */
-  border: 1px solid rgba(255, 255, 255, 0.25) !important; /* Light white border */
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important; 
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
@@ -69,12 +69,10 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Slightly different tone for light theme (auto adjusts) */
 body.light-theme .hover-shadow:hover {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15), 0 0 10px rgba(0, 150, 255, 0.1);
 }
 
-/* Buttons styled to match navbar/footer tone */
 .btn-outline-light {
   border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
@@ -93,7 +91,6 @@ body.light-theme .hover-shadow:hover {
 
 <body>
   <div class="page-wrapper">
-    <!-- 🌟 Navbar -->
     <nav class="navbar navbar-expand-lg custom-navbar shadow-sm">
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">

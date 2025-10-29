@@ -4,11 +4,9 @@ body {
   font-family: 'Urbanist', 'Inter', sans-serif;
 }
 
-/* ===============================
-   🌟 Consistent Navbar Design
-   =============================== */
+
 .custom-navbar {
-  background-color: #1a4a8c !important; /* toned-down deep navy */
+  background-color: #1a4a8c !important; 
   color: #fff !important;
   padding: 0.75rem 1.5rem;
   position: fixed;
@@ -39,7 +37,7 @@ body {
   color: #c7dbff !important;
 }
 
-/* 🌙 Theme Switcher */
+
 .theme-switch {
   position: relative;
   width: 55px;
@@ -75,9 +73,7 @@ body {
   opacity: 0.8;
 }
 
-/* ===============================
-   🌈 Premium Form Design
-   =============================== */
+
 .form-container {
   max-width: 900px;
   margin: 2rem auto;
@@ -102,7 +98,6 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* 🎯 Grid-based form layout */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -133,7 +128,7 @@ body {
 }
 
 .form-container textarea {
-  grid-column: span 2; /* make textarea span both columns */
+  grid-column: span 2; 
   min-height: 100px;
   resize: none;
 }
@@ -148,7 +143,7 @@ body {
   width: 100%;
   transition: all 0.3s ease;
   letter-spacing: 0.4px;
-  grid-column: span 2; /* full width button */
+  grid-column: span 2;
 }
 
 .form-container .btn:hover {
@@ -157,7 +152,6 @@ body {
   box-shadow: 0 5px 15px rgba(26, 74, 140, 0.25);
 }
 
-/* 📱 Responsive */
 @media (max-width: 576px) {
   .form-container {
     padding: 1.2rem;
@@ -166,7 +160,7 @@ body {
   }
 
   .form-grid {
-    grid-template-columns: 1fr; /* single column on small screens */
+    grid-template-columns: 1fr; 
   }
 
   .form-container h2 {
@@ -176,13 +170,10 @@ body {
 
 
 
-/* ================================================
-   🔵 Global Button Styling (matches navbar/footer)
-   ================================================ */
 .btn,
 button,
 input[type="submit"] {
-  background: linear-gradient(135deg, #0a58ca, #084bb5); /* Same as navbar/footer */
+  background: linear-gradient(135deg, #0a58ca, #084bb5); 
   color: #fff !important;
   border: none;
   border-radius: 10px;

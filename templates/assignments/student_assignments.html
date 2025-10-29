@@ -5,7 +5,6 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- 🔹 Header (centered) -->
   <div class="text-center mb-5">
     <h2 class="fw-bold section-heading mb-2">My Assignments</h2>
     <p class=" section-subheading mb-0">
@@ -13,7 +12,6 @@
     </p>
   </div>
 
-  <!-- 🕒 Pending Assignments -->
   <div class="mb-5">
     <h4 class="warning mb-3">⏳ Pending Assignments</h4>
     {% if pending_assignments %}
@@ -42,7 +40,7 @@
     {% endif %}
   </div>
 
-  <!-- ✅ Submitted Assignments -->
+
   <div>
     <h4 class="text-success mb-3">✅ Submitted Assignments</h4>
     {% if submitted_assignments %}

@@ -5,7 +5,6 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- 🏠 Dashboard Heading -->
   {% if is_instructor %}
     <div class="text-center mb-5">
       <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
@@ -14,7 +13,6 @@
   {% endif %}
 
   {% if is_instructor %}
-  <!-- 👨‍🏫 Instructor Section -->
   <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
 
   {% if courses %}
@@ -46,7 +44,6 @@
     </div>
   {% endif %}
 
-  <!-- 👥 Your Students Section -->
   <h3 class="mb-4 fw-semibold section-subheading">Your Students</h3>
   {% if students %}
     <div class="row g-4">
@@ -67,14 +64,12 @@
   {% endif %}
 
   {% else %}
-  <!-- 🎓 Student Section -->
   <div class="text-center mb-5">
     <h3 class="fw-bold section-heading">Welcome, {{ user.username }} 👋</h3>
   </div>
 
-  <!-- 🔹 Summary Cards -->
+
   <div class="row g-4 mt-3">
-  <!-- Classes Remaining -->
   <div class="col-md-4">
     <div class="course-card text-center p-4 h-100">
       <h5 class="fw-bold text-success mb-1">Classes Remaining</h5>
@@ -85,7 +80,7 @@
     </div>
   </div>
 
-  <!-- Total Courses -->
+
   <div class="col-md-4">
     <div class="course-card text-center p-4 h-100">
       <h5 class="fw-bold text-info mb-1">Total Courses</h5>
@@ -96,7 +91,6 @@
     </div>
   </div>
 
-  <!-- Pending Assignments -->
   <div class="col-md-4">
     <div class="course-card text-center p-4 h-100">
       <h5 class="fw-bold text-warning mb-1">Pending Assignments</h5>

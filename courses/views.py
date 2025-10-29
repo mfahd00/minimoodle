@@ -139,7 +139,7 @@ def dashboard(request):
     if user.profile.is_instructor:
         courses = Course.objects.filter(created_by=user)
         enrollments = Enrollment.objects.filter(course__in=courses).select_related('student')
-        students = list({enrollment.student for enrollment in enrollments})  # unique students
+        students = list({enrollment.student for enrollment in enrollments})  
 
         return render(request, 'auth/dashboard.html', {
             'is_instructor': True,
@@ -150,7 +150,7 @@ def dashboard(request):
     else:
         enrollments = user.enrollments.select_related('course').distinct()
 
-        # calculate progress for each enrollment
+
         for enrollment in enrollments:
             total = enrollment.course.lessons.count()
             completed = enrollment.completed_lessons.count()
@@ -158,7 +158,7 @@ def dashboard(request):
 
         now = timezone.now()
 
-        # ✅ Proper pending assignments query
+
         pending_assignments = Assignment.objects.filter(
             course__in=[en.course for en in enrollments],
             due_date__gte=now
@@ -166,10 +166,7 @@ def dashboard(request):
             Q(submissions__isnull=True) | ~Q(submissions__student=user)
         ).distinct()
 
-        # ✅ Counters for dashboard cards
         pending_count = pending_assignments.count()
-
-        # Example: Remaining classes = uncompleted lessons
         remaining_classes = sum(
             en.course.lessons.count() - en.completed_lessons.count()
             for en in enrollments
@@ -179,8 +176,8 @@ def dashboard(request):
             'is_instructor': False,
             'enrollments': enrollments,
             'pending_assignments': pending_assignments,
-            'pending_count': pending_count,        # 🟢 now available for template
-            'remaining_classes': remaining_classes  # 🟢 now available for template
+            'pending_count': pending_count,       
+            'remaining_classes': remaining_classes  
         })
 
 

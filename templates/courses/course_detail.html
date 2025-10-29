@@ -18,10 +18,8 @@
 
     {% if user.is_authenticated %}
       {% if user.profile.is_instructor or user == course.created_by %}
-        <!-- 🔹 Instructors and course creator can’t enroll -->
         <p class="fw-semibold section-heading">👩‍🏫 You’re the instructor for this course.</p>
       {% else %}
-        <!-- 🔹 Students -->
         {% if enrolled %}
           <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
         {% else %}
@@ -48,7 +46,7 @@
     {% endif %}
   </div>
 
-  <!-- 📘 Lessons -->
+
   <div class="overlay-box p-4 mb-4">
     <h4 class="section-heading mb-3">📘 Lessons</h4>
     {% if lessons %}
@@ -70,7 +68,7 @@
     {% endif %}
   </div>
 
-  <!-- 📝 Assignments -->
+
   <div class="overlay-box p-4">
     <h4 class="section-heading mb-3">📝 Assignments</h4>
     {% if course.assignments.all %}

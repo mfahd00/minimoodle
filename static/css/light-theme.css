@@ -5,7 +5,6 @@ body {
   color: #222;
 }
 
-/* Navbar */
 .navbar {
   background-color: #ffffff;
   color: #222;
@@ -24,7 +23,6 @@ body {
   color: #007bff !important;
 }
 
-/* Buttons */
 .btn {
   background-color: #007bff;
   color: #fff;
@@ -47,7 +45,6 @@ body {
   color: #fff;
 }
 
-/* Cards */
 .course-card {
   background-color: #ffffff;
   border: 1px solid #ddd;
@@ -62,7 +59,6 @@ body {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Overlay Box */
 .overlay-box {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -79,7 +75,6 @@ body {
   box-shadow: 0 10px 35px rgba(0, 123, 255, 0.3);
 }
 
-/* Text & Headings */
 .hero h1 {
   color: #0057b5;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -97,17 +92,16 @@ body {
   border-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Footer */
 footer {
   background-color: #ffffff;
   color: #333;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Course Titles (Latest Courses) */
+
 .course-title,
 .course-title-link {
-  color: #0057b5; /* Bright theme blue */
+  color: #0057b5; 
   transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
@@ -122,13 +116,13 @@ footer {
 }
 
 .badge-cat {
-  background-color: #d0e8ff;  /* Soft blue tint */
-  color: #004085;             /* Deep navy text */
+  background-color: #d0e8ff;  
+  color: #004085;            
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .badge-uncat {
-  background-color: #f0f0f0;  /* Neutral gray */
+  background-color: #f0f0f0;  
   color: #555;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
