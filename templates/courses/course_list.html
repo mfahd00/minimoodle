@@ -12,52 +12,50 @@
     <div class="sort-options">
       <span class="section-subheading me-2">Sort by:</span>
       <a href="?sort=popular"
-         class="btn btn-sm btn-outline-info {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">
-         Popular
+        class="btn btn-sm btn-outline-info {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">
+        Popular
       </a>
-      <a href="?sort=newest"
-         class="btn btn-sm btn-outline-info {% if request.GET.sort == 'newest' %}active{% endif %}">
-         Newest
+      <a href="?sort=newest" class="btn btn-sm btn-outline-info {% if request.GET.sort == 'newest' %}active{% endif %}">
+        Newest
       </a>
-      <a href="?sort=oldest"
-         class="btn btn-sm btn-outline-info {% if request.GET.sort == 'oldest' %}active{% endif %}">
-         Oldest
+      <a href="?sort=oldest" class="btn btn-sm btn-outline-info {% if request.GET.sort == 'oldest' %}active{% endif %}">
+        Oldest
       </a>
     </div>
   </div>
 
   <div class="row g-4">
     {% for course in page_obj %}
-      <div class="col-md-6 col-lg-4">
-        <div class="course-card h-100 p-4 d-flex flex-column">
+    <div class="col-md-6 col-lg-4">
+      <div class="course-card h-100 p-4 d-flex flex-column">
 
-          <h5 class="fw-bold mb-2">
-            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-subheading">
-              {{ course.title }}
-            </a>
-          </h5>
+        <h5 class="fw-bold mb-2">
+          <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-subheading">
+            {{ course.title }}
+          </a>
+        </h5>
 
-          {% if course.category %}
-            <span class="badge badge-cat mb-2">{{ course.category.name }}</span>
-          {% else %}
-            <span class="badge bg-secondary mb-2">Uncategorized</span>
-          {% endif %}
+        {% if course.category %}
+        <span class="badge badge-cat mb-2">{{ course.category.name }}</span>
+        {% else %}
+        <span class="badge bg-secondary mb-2">Uncategorized</span>
+        {% endif %}
 
-          <p class="small mb-1"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
-          <p class="small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
+        <p class="small mb-1"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
+        <p class="small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
 
-          <div class="mt-auto">
-            <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold ">
-              View Course
-            </a>
-          </div>
+        <div class="mt-auto">
+          <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold ">
+            View Course
+          </a>
         </div>
       </div>
+    </div>
     {% empty %}
-      <div class="empty-state text-center py-5">
-        <p class="mb-3 text-muted">No courses found.</p>
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Go to Dashboard</a>
-      </div>
+    <div class="empty-state text-center py-5">
+      <p class="mb-3 text-muted">No courses found.</p>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Go to Dashboard</a>
+    </div>
     {% endfor %}
   </div>
 
@@ -66,40 +64,40 @@
     <nav aria-label="Page navigation">
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link custom-page-link"
-               href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-              Previous
-            </a>
-          </li>
+        <li class="page-item">
+          <a class="page-link custom-page-link"
+            href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            Previous
+          </a>
+        </li>
         {% else %}
-          <li class="page-item disabled"><span class="page-link custom-page-link disabled">Previous</span></li>
+        <li class="page-item disabled"><span class="page-link custom-page-link disabled">Previous</span></li>
         {% endif %}
 
         {% for num in page_obj.paginator.page_range %}
-          {% if page_obj.number == num %}
-            <li class="page-item active">
-              <span class="page-link bg-info border-0 text-dark fw-bold">{{ num }}</span>
-            </li>
-          {% else %}
-            <li class="page-item">
-              <a class="page-link custom-page-link"
-                 href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-                {{ num }}
-              </a>
-            </li>
-          {% endif %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+          <span class="page-link bg-info border-0 text-dark fw-bold">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link custom-page-link"
+            href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            {{ num }}
+          </a>
+        </li>
+        {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link custom-page-link"
-               href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-              Next
-            </a>
-          </li>
+        <li class="page-item">
+          <a class="page-link custom-page-link"
+            href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            Next
+          </a>
+        </li>
         {% else %}
-          <li class="page-item disabled"><span class="page-link custom-page-link disabled">Next</span></li>
+        <li class="page-item disabled"><span class="page-link custom-page-link disabled">Next</span></li>
         {% endif %}
       </ul>
     </nav>
