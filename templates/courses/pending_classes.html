@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4 section-heading fw-bold">Pending Classes</h3>
+
+  {% if pending_lessons %}
+    <div class="list-group">
+      {% for item in pending_lessons %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ item.lesson.title }}</strong>
+            <p class="section-heading mb-0 small">Course: {{ item.course.title }}</p>
+          </div>
+          <a href="{% url 'course_detail' item.course.id %}" class="btn btn-sm btn-outline-success">Go to Course</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">🎉 All caught up! You have no pending classes.</p>
+  {% endif %}
+</div>
+{% endblock %}

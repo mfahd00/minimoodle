@@ -17,13 +17,19 @@
     </p>
 
     {% if user.is_authenticated %}
-      {% if enrolled %}
-        <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
+      {% if user.profile.is_instructor or user == course.created_by %}
+        <!-- 🔹 Instructors and course creator can’t enroll -->
+        <p class="fw-semibold section-heading">👩‍🏫 You’re the instructor for this course.</p>
       {% else %}
-        <form action="{% url 'enroll_course' course.id %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary px-4">Enroll Now</button>
-        </form>
+        <!-- 🔹 Students -->
+        {% if enrolled %}
+          <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
+        {% else %}
+          <form action="{% url 'enroll_course' course.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary px-4">Enroll Now</button>
+          </form>
+        {% endif %}
       {% endif %}
     {% else %}
       <p>
@@ -33,7 +39,7 @@
       </p>
     {% endif %}
 
-    {% if user == course.created_by %}
+    {% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
       <div class="d-flex flex-wrap gap-2 mt-3">
         <a href="{% url 'create_lesson' course.id %}" class="btn btn-outline-success">➕ Add Lesson</a>
         <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-warning">✏️ Edit</a>

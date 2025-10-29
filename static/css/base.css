@@ -213,13 +213,13 @@ input[type="submit"]:disabled {
   border: 1px solid rgba(254, 255, 255, 0.08);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.06);
   transition: all 0.3s ease;
 }
 
 .course-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
   border-color: var(--bs-primary);
 }
 
@@ -234,12 +234,15 @@ input[type="submit"]:disabled {
 }
 
 .empty-state {
-  border: 2px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background-color: inherit;
+  border: 1px solid rgba(0, 8, 255, 0.15);
+  border-radius: 12px;
+  transition: background-color 0.3s ease, border 0.3s ease;
 }
 
-/* 🌄 Hero Section Background */
+
+
+
 
 
 

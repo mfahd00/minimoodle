@@ -161,3 +161,7 @@ input:focus, select:focus, textarea:focus {
 .section-subheading {
   color: #ffffff;
 }
+
+.warning {
+  color: #ffae00;
+}

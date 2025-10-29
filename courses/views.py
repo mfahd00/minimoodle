@@ -1,14 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.utils import timezone
 from .models import Course, Lesson, Enrollment, Profile, Category, Assignment, Submission
 from .forms import CourseForm, LessonForm, CustomUserCreationForm, AssignmentForm, SubmissionForm
-from django.contrib.auth.models import User
 
 def register_student(request):
     if request.method == 'POST':
@@ -75,10 +76,6 @@ def login_instructor(request):
             error = "Invalid username or password."
     return render(request, 'auth/login.html', {'instructor_error': error, 'show_tab': 'instructor'})
 
-
-
-
-
 @login_required
 def logout_view(request):
     logout(request)
@@ -132,24 +129,61 @@ def enroll_course(request, course_id):
     Enrollment.objects.get_or_create(student=request.user, course=course)
     return redirect('course_detail', course_id=course.id)
 
+
+from django.db.models import Q
+
 @login_required
 def dashboard(request):
-    if request.user.profile.is_instructor:
-        courses = Course.objects.filter(created_by=request.user)
+    user = request.user
+
+    if user.profile.is_instructor:
+        courses = Course.objects.filter(created_by=user)
+        enrollments = Enrollment.objects.filter(course__in=courses).select_related('student')
+        students = list({enrollment.student for enrollment in enrollments})  # unique students
+
         return render(request, 'auth/dashboard.html', {
             'is_instructor': True,
-            'courses': courses
+            'courses': courses,
+            'students': students,
         })
+
     else:
-        enrollments = request.user.enrollments.select_related('course').distinct()
+        enrollments = user.enrollments.select_related('course').distinct()
+
+        # calculate progress for each enrollment
         for enrollment in enrollments:
             total = enrollment.course.lessons.count()
             completed = enrollment.completed_lessons.count()
             enrollment.progress = int((completed / total) * 100) if total > 0 else 0
+
+        now = timezone.now()
+
+        # ✅ Proper pending assignments query
+        pending_assignments = Assignment.objects.filter(
+            course__in=[en.course for en in enrollments],
+            due_date__gte=now
+        ).filter(
+            Q(submissions__isnull=True) | ~Q(submissions__student=user)
+        ).distinct()
+
+        # ✅ Counters for dashboard cards
+        pending_count = pending_assignments.count()
+
+        # Example: Remaining classes = uncompleted lessons
+        remaining_classes = sum(
+            en.course.lessons.count() - en.completed_lessons.count()
+            for en in enrollments
+        )
+
         return render(request, 'auth/dashboard.html', {
             'is_instructor': False,
-            'enrollments': enrollments
+            'enrollments': enrollments,
+            'pending_assignments': pending_assignments,
+            'pending_count': pending_count,        # 🟢 now available for template
+            'remaining_classes': remaining_classes  # 🟢 now available for template
         })
+
+
 
 @login_required
 def create_course(request):
@@ -299,3 +333,41 @@ def view_submissions(request, assignment_id):
         'submissions': submissions
     })
 
+@login_required
+def student_assignments(request):
+    if request.user.profile.is_instructor:
+        return HttpResponseForbidden("Instructors cannot access student assignments.")
+
+    enrolled_courses = Enrollment.objects.filter(student=request.user).values_list('course', flat=True)
+    assignments = Assignment.objects.filter(course__in=enrolled_courses).order_by('-due_date')
+    submitted_ids = Submission.objects.filter(student=request.user).values_list('assignment_id', flat=True)
+    pending_assignments = assignments.exclude(id__in=submitted_ids)
+    submitted_assignments = assignments.filter(id__in=submitted_ids)
+
+    return render(request, 'assignments/student_assignments.html', {
+        'pending_assignments': pending_assignments,
+        'submitted_assignments': submitted_assignments,
+        'page_title': 'My Assignments',
+    })
+
+@login_required
+def pending_classes(request):
+    if request.user.profile.is_instructor:
+        return HttpResponseForbidden("Instructors cannot access pending classes.")
+
+    enrollments = Enrollment.objects.filter(student=request.user).select_related('course')
+    pending_lessons = []
+
+    for enrollment in enrollments:
+        completed = enrollment.completed_lessons.values_list('id', flat=True)
+        lessons_left = enrollment.course.lessons.exclude(id__in=completed)
+        for lesson in lessons_left:
+            pending_lessons.append({
+                'course': enrollment.course,
+                'lesson': lesson,
+            })
+
+    return render(request, 'courses/pending_classes.html', {
+        'pending_lessons': pending_lessons,
+        'page_title': 'Pending Classes',
+    })

@@ -132,3 +132,7 @@ footer {
   color: #555;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.warning {
+  color: #9f6d00;
+}

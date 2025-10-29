@@ -6,80 +6,138 @@
 <div class="container py-4">
 
   <!-- 🏠 Dashboard Heading -->
-  <h2 class="mb-4 fw-bold section-heading">Dashboard</h2>
+  {% if is_instructor %}
+    <div class="text-center mb-5">
+      <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
+      <p class="text-muted section-subheading mb-0">Your learning and teaching hub</p>
+    </div>
+  {% endif %}
 
   {% if is_instructor %}
-    <!-- 👨‍🏫 Instructor Section -->
-    <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
+  <!-- 👨‍🏫 Instructor Section -->
+  <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
 
-    {% if courses %}
-      <div class="row g-4">
-        {% for course in courses %}
-          <div class="col-md-6 col-lg-4">
-            <div class="course-card h-100 p-4 d-flex flex-column">
-              <h5 class="fw-bold text-info mb-2">
-                <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-info">
-                  {{ course.title }}
-                </a>
-              </h5>
-              <p class="text-secondary small mb-3">
-                {{ course.enrollment_set.count }} student{{ course.enrollment_set.count|pluralize }}
-              </p>
+  {% if courses %}
+    <div class="row g-4 mb-5">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-card h-100 p-4 d-flex flex-column">
+            <h5 class="fw-bold text-info mb-2">
+              <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-info">
+                {{ course.title }}
+              </a>
+            </h5>
+            <p class="text-secondary small mb-3">
+              {{ course.enrollment_set.count }} student{{ course.enrollment_set.count|pluralize }}
+            </p>
 
-              <div class="mt-auto d-flex justify-content-between">
-                <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-info btn-sm flex-grow-1 me-1">Edit</a>
-                <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-danger btn-sm flex-grow-1">Delete</a>
-              </div>
+            <div class="mt-auto d-flex justify-content-between">
+              <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-info btn-sm flex-grow-1 me-1">Edit</a>
+              <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-danger btn-sm flex-grow-1">Delete</a>
             </div>
           </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state text-center py-5">
-        <p class="mb-3 text-muted">You haven’t created any courses yet.</p>
-        <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2 rounded-pill text-dark fw-semibold">+ Create a Course</a>
-      </div>
-    {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state text-center py-5 mb-5">
+      <p class="mb-3 text-muted">You haven’t created any courses yet.</p>
+      <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2 rounded-pill text-dark fw-semibold">+ Create a Course</a>
+    </div>
+  {% endif %}
+
+  <!-- 👥 Your Students Section -->
+  <h3 class="mb-4 fw-semibold section-subheading">Your Students</h3>
+  {% if students %}
+    <div class="row g-4">
+      {% for student in students %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-card h-100 p-3">
+            <h6 class="fw-bold text-dark mb-1">{{ student.username }}</h6>
+            <p class="small text-muted mb-2">{{ student.email }}</p>
+            <p class="small"><strong>Enrolled Courses:</strong> {{ student.enrollments.count }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state text-center py-4">
+      <p class="text-muted mb-0">No students enrolled in your courses yet.</p>
+    </div>
+  {% endif %}
 
   {% else %}
-    <!-- 🎓 Student Section -->
-    <h3 class="mb-4 fw-semibold section-subheading">Your Enrolled Courses</h3>
+  <!-- 🎓 Student Section -->
+  <div class="text-center mb-5">
+    <h3 class="fw-bold section-heading">Welcome, {{ user.username }} 👋</h3>
+  </div>
 
-    {% if enrollments %}
-      <div class="row g-4">
-        {% for enrollment in enrollments %}
-          <div class="col-md-6 col-lg-4">
-            <div class="course-card h-100 p-4 d-flex flex-column">
-              <h5 class="fw-bold text-info mb-2">
-                <a href="{% url 'course_detail' enrollment.course.id %}" class="text-decoration-none section-heading">
-                  {{ enrollment.course.title }}
-                </a>
-              </h5>
+  <!-- 🔹 Summary Cards -->
+  <div class="row g-4 mt-3">
+  <!-- Classes Remaining -->
+  <div class="col-md-4">
+    <div class="course-card text-center p-4 h-100">
+      <h5 class="fw-bold text-success mb-1">Classes Remaining</h5>
+      <p class="display-6 fw-bold mb-2">{{ remaining_classes|default:"0" }}</p>
+      <a href="{% url 'pending_classes' %}" class="btn btn-outline-success btn-sm mt-2">
+        View Pending Classes
+      </a>
+    </div>
+  </div>
 
-              {% if enrollment.course.category %}
-                <span class="badge badge-cat mb-2">{{ enrollment.course.category.name }}</span>
-              {% endif %}
-              <p class="text-secondary small mb-2"><strong>Instructor:</strong> {{ enrollment.course.created_by.username }}</p>
+  <!-- Total Courses -->
+  <div class="col-md-4">
+    <div class="course-card text-center p-4 h-100">
+      <h5 class="fw-bold text-info mb-1">Total Courses</h5>
+      <p class="display-6 fw-bold mb-2">{{ enrollments|length }}</p>
+      <a href="{% url 'course_list' %}" class="btn btn-outline-info btn-sm mt-2">
+        Browse Courses
+      </a>
+    </div>
+  </div>
 
-              <div class="progress mb-2" style="height: 16px;">
-                <div class="progress-bar bg-info" role="progressbar"
-                     style="width: {{ enrollment.progress }}%;"
-                     aria-valuenow="{{ enrollment.progress }}"
-                     aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-              <p class="small text-secondary mb-3">{{ enrollment.progress }}% completed</p>
+  <!-- Pending Assignments -->
+  <div class="col-md-4">
+    <div class="course-card text-center p-4 h-100">
+      <h5 class="fw-bold text-warning mb-1">Pending Assignments</h5>
+      <p class="display-6 fw-bold mb-2">{{ pending_count|default:"0" }}</p>
+      <a href="{% url 'student_assignments' %}" class="btn btn-outline-warning btn-sm mt-2">
+        View Pending Assignments
+      </a>
+    </div>
+  </div>
+</div>
 
-              <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>
-            </div>
+
+  <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
+
+  {% if enrollments %}
+    <div class="row g-4">
+      {% for enrollment in enrollments %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-card h-100 p-4 d-flex flex-column">
+            <h5 class="fw-bold text-info mb-2">
+              <a href="{% url 'course_detail' enrollment.course.id %}" class="text-decoration-none section-heading">
+                {{ enrollment.course.title }}
+              </a>
+            </h5>
+
+            {% if enrollment.course.category %}
+              <span class="badge badge-cat mb-2">{{ enrollment.course.category.name }}</span>
+            {% endif %}
+            <p class="text-secondary small mb-2"><strong>Instructor:</strong> {{ enrollment.course.created_by.username }}</p>
+
+            <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>
           </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state text-center py-5">
-        <p class="mb-3 text-muted">You haven’t enrolled in any courses yet.</p>
-        <a href="{% url 'course_list' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Browse Courses</a>
-      </div>
-    {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state text-center py-5">
+      <p class="mb-3 text-muted">You haven’t enrolled in any courses yet.</p>
+      <a href="{% url 'course_list' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Browse Courses</a>
+    </div>
+  {% endif %}
   {% endif %}
 </div>
 {% endblock %}
