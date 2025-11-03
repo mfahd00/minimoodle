@@ -78,3 +78,17 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.assignment.title}"
+
+class Announcement(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='announcements')
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

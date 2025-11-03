@@ -3,7 +3,6 @@ from django.urls import path, include
 from courses import views as course_views
 from . import views
 
-
 urlpatterns = [
     path('', course_views.home, name='home'),
     path('courses/', course_views.course_list, name='course_list'),
@@ -13,15 +12,19 @@ urlpatterns = [
     path('courses/<int:course_id>/delete/', course_views.delete_course, name='delete_course'),
     path('courses/<int:course_id>/add_lesson/', course_views.create_lesson, name='create_lesson'),
     path('courses/<int:course_id>/enroll/', course_views.enroll_course, name='enroll_course'),
+
     path('register/', views.choose_registration, name='register'),
     path('register/student/', views.register_student, name='register_student'),
     path('register/instructor/', views.register_instructor, name='register_instructor'),
+
     path('login/', views.login_page, name='login'),
     path('login/student/', views.login_student, name='login_student'),
     path('login/instructor/', views.login_instructor, name='login_instructor'),
     path('logout/', views.logout_view, name='logout'),
+
     path('dashboard/', views.dashboard, name='dashboard'),
     path('courses/category/<int:category_id>/', views.courses_by_category, name='courses_by_category'),
+
     path('courses/<int:course_id>/assignments/', views.assignment_list, name='assignment_list'),
     path('courses/<int:course_id>/assignments/create/', views.create_assignment, name='create_assignment'),
     path('assignments/<int:assignment_id>/submit/', views.submit_assignment, name='submit_assignment'),
@@ -29,4 +32,9 @@ urlpatterns = [
     path('assignments/', views.student_assignments, name='student_assignments'),
     path('pending-classes/', views.pending_classes, name='pending_classes'),
 
+    path('courses/<int:course_id>/announcements/', views.announcement_list, name='announcement_list'),
+    path('courses/<int:course_id>/announcements/create/', views.create_announcement, name='create_announcement'),
+    path('courses/<int:course_id>/announcements/<int:announcement_id>/edit/', views.edit_announcement, name='edit_announcement'),
+    path('courses/<int:course_id>/announcements/<int:announcement_id>/delete/', views.delete_announcement, name='delete_announcement'),
+    path('announcements/', views.global_announcement_list, name='global_announcement_list'),
 ]

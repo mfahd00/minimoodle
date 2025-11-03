@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}All Announcements | LAP{% endblock %}
+{% block content %}
+
+<div class="container py-4">
+  <h2 class="section-heading fw-bold mb-4">📢 All Announcements</h2>
+
+  {% if announcements %}
+    <div class="row g-4">
+      {% for announcement in announcements %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-card h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold">{{ announcement.title }}</h5>
+              <p class="card-text flex-grow-1">{{ announcement.message|truncatewords:25 }}</p>
+              <p class="text-muted small mb-2">
+                Course: {{ announcement.course.title }}<br>
+                Posted: {{ announcement.created_at|date:"M d, Y" }}
+              </p>
+
+              <div class="mt-auto">
+                <a href="{% url 'announcement_list' announcement.course.id %}" class="btn btn-outline-primary btn-sm">
+                  View in Course
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No announcements available.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

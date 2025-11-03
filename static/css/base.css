@@ -231,6 +231,16 @@ input[type="submit"]:disabled {
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+.modal {
+  z-index: 1050 !important;
+}
+.overlay-box {
+  position: relative;
+  z-index: 1;
+}
 
 
 

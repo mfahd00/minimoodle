@@ -8,7 +8,7 @@
   {% if is_instructor %}
   <div class="text-center mb-5">
     <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
-    <p class="text-muted section-subheading mb-0">Your learning and teaching hub</p>
+    <p class=" section-subheading mb-0">Your learning and teaching hub</p>
   </div>
   {% endif %}
 
@@ -21,7 +21,7 @@
     <div class="col-md-6 col-lg-4">
       <div class="course-card h-100 p-4 d-flex flex-column">
         <h5 class="fw-bold text-info mb-2">
-          <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-info">
+          <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-heading">
             {{ course.title }}
           </a>
         </h5>
@@ -51,8 +51,8 @@
     {% for student in students %}
     <div class="col-md-6 col-lg-4">
       <div class="course-card h-100 p-3">
-        <h6 class="fw-bold text-dark mb-1">{{ student.username }}</h6>
-        <p class="small text-muted mb-2">{{ student.email }}</p>
+        <h6 class="fw-bold section-heading mb-1">{{ student.username }}</h6>
+        <p class="small mb-2">{{ student.email }}</p>
         <p class="small"><strong>Enrolled Courses:</strong> {{ student.enrollments.count }}</p>
       </div>
     </div>
@@ -66,7 +66,7 @@
 
   {% else %}
   <div class="text-center mb-5">
-    <h3 class="fw-bold section-subheading">Welcome back, {{ user.username }} 👋</h3>
+    <h3 class="fw-bold section-heading">Welcome back, {{ user.username }} 👋</h3>
   </div>
 
 

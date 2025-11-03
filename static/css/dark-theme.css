@@ -151,3 +151,25 @@ input:focus, select:focus, textarea:focus {
 .warning {
   color: #ffae00;
 }
+
+input, select, textarea {
+  background-color: #2a2f3a;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #ccc;
+  opacity: 0.8;
+}
+
+select {
+  color: #fff;
+  background-color: #2a2f3a;
+}
+
+option {
+  background-color: #2a2f3a;
+  color: #fff;
+}

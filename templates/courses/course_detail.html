@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
+{% load humanize %}  {# For natural time display #}
+
 {% block content %}
 <div class="container py-5">
 
-  <!-- 🌟 Course Header -->
+
+
   <div class="overlay-box p-4 mb-5">
     <h2 class="section-heading mb-3">{{ course.title }}</h2>
     <p class="fs-5 mb-3">{{ course.description }}</p>
@@ -45,8 +48,33 @@
       </div>
     {% endif %}
   </div>
+  <div class="overlay-box p-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="section-heading fw-semibold section-heading mb-0"> 📢 Announcements</h4>
 
+      {% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
+        <a href="{% url 'create_announcement' course.id %}" class="btn btn-outline-primary btn-sm">
+          ➕ New Announcement
+        </a>
+      {% endif %}
+    </div>
 
+    {% if course.announcements.all %}
+      {% for ann in course.announcements.all %}
+        <div class=" mb-3 p-3 shadow-sm announcement-card">
+          <h5 class="fw-bold section-subheading">{{ ann.title }}</h5>
+          <p class="mb-2">{{ ann.message }}</p>
+          <small class="">
+            Posted {{ ann.created_at|naturaltime }} by {{ ann.created_by }}
+          </small>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted mb-0">No announcements yet.</p>
+    {% endif %}
+  </div>
+
+  
   <div class="overlay-box p-4 mb-4">
     <h4 class="section-heading mb-3">📘 Lessons</h4>
     {% if lessons %}
@@ -55,7 +83,7 @@
           <li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
             <div>
               <strong class="course-title">{{ lesson.title }}</strong><br>
-              <small class="text-muted">{{ lesson.content|truncatewords:25 }}</small>
+              <small class="section-subheading">{{ lesson.content|truncatewords:25 }}</small>
             </div>
             {% if lesson.video_url %}
               <a href="{{ lesson.video_url }}" target="_blank" class="btn btn-outline-info btn-sm">🎥 Watch</a>
@@ -68,7 +96,7 @@
     {% endif %}
   </div>
 
-
+  <!-- 📝 Assignments -->
   <div class="overlay-box p-4">
     <h4 class="section-heading mb-3">📝 Assignments</h4>
     {% if course.assignments.all %}
@@ -77,7 +105,7 @@
           <li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
             <div>
               <strong class="course-title">{{ assignment.title }}</strong><br>
-              <small class="text-muted">Due: {{ assignment.due_date|date:"Y-m-d H:i" }}</small>
+              <small class="">Due: {{ assignment.due_date|date:"Y-m-d H:i" }}</small>
             </div>
 
             {% if user.is_authenticated %}
@@ -102,4 +130,18 @@
   {% endif %}
 
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.announcement-card {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+.announcement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+</style>
 {% endblock %}

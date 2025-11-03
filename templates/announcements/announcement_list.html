@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+  {% if user.profile.is_instructor %}
+  <div class="form-container mt-4">
+    <h2>Create Announcement</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div>
+          <label for="id_title" class="form-label ">Title</label>
+          <input type="text" id="id_title" name="title" required>
+        </div>
+
+        <div>
+          <label for="id_course" class="form-label ">Course</label>
+          <select id="id_course" name="course_id" required>
+            <option value="">Select Course</option>
+            {% for course in courses %}
+              <option value="{{ course.id }}">{{ course.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label for="id_content" class="form-label ">Message</label>
+          <textarea id="id_content" name="content" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn mt-2">Submit</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="mt-5">
+    <h4 class="fw-bold text-center mb-4">Recent Announcements</h4>
+    {% if announcements %}
+      {% for a in announcements %}
+        <div class="course-card mb-3 mx-auto" style="max-width: 900px;">
+          <h5 class="fw-bold section-heading">{{ a.title }}</h5>
+          <p class="mb-2">{{ a.message }}</p>
+          <small class="">
+            Posted in <strong>{{ a.course.title }}</strong> by {{ a.created_by.username }} on {{ a.created_at|date:"M d, Y H:i" }}
+          </small>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="text-center text-muted">No announcements yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -8,8 +8,8 @@ from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.utils import timezone
-from .models import Course, Lesson, Enrollment, Profile, Category, Assignment, Submission
-from .forms import CourseForm, LessonForm, CustomUserCreationForm, AssignmentForm, SubmissionForm
+from .models import Course, Lesson, Enrollment, Profile, Category, Assignment, Submission, Announcement
+from .forms import CourseForm, LessonForm, CustomUserCreationForm, AssignmentForm, SubmissionForm, AnnouncementForm
 
 def register_student(request):
     if request.method == 'POST':
@@ -368,3 +368,88 @@ def pending_classes(request):
         'pending_lessons': pending_lessons,
         'page_title': 'Pending Classes',
     })
+
+@login_required
+def announcement_list(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    announcements = course.announcements.all()
+    return render(request, 'announcements/announcement_list.html', {
+        'course': course,
+        'announcements': announcements,
+    })
+
+@login_required
+def create_announcement(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if not request.user.profile.is_instructor:
+        return redirect('announcement_list', course_id=course.id)
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.course = course
+            announcement.created_by = request.user
+            announcement.save()
+            return redirect('announcement_list', course_id=course.id)
+    else:
+        form = AnnouncementForm()
+
+    return render(request, 'announcements/announcement_form.html', {
+        'form': form,
+        'course': course,
+    })
+
+@login_required
+def edit_announcement(request, course_id, announcement_id):
+    course = get_object_or_404(Course, id=course_id)
+    announcement = get_object_or_404(Announcement, id=announcement_id, course=course)
+
+    if not request.user.profile.is_instructor:
+        return redirect('announcement_list', course_id=course.id)
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, instance=announcement)
+        if form.is_valid():
+            form.save()
+            return redirect('announcement_list', course_id=course.id)
+    else:
+        form = AnnouncementForm(instance=announcement)
+
+    return render(request, 'announcements/announcement_form.html', {
+        'form': form,
+        'course': course,
+    })
+
+@login_required
+def delete_announcement(request, course_id, announcement_id):
+    course = get_object_or_404(Course, id=course_id)
+    announcement = get_object_or_404(Announcement, id=announcement_id, course=course)
+
+    if request.user.profile.is_instructor:
+        announcement.delete()
+
+    return redirect('announcement_list', course_id=course.id)
+
+@login_required
+def global_announcement_list(request):
+    announcements = Announcement.objects.all().order_by('-created_at')
+
+    if request.user.profile.is_instructor and request.method == 'POST':
+        title = request.POST.get('title')
+        message = request.POST.get('content')
+        course_id = request.POST.get('course_id')
+
+        if title and message and course_id:
+            course = Course.objects.get(id=course_id)
+            Announcement.objects.create(
+                course=course,
+                title=title,
+                message=message,
+                created_by=request.user
+            )
+            return redirect('global_announcement_list')
+
+    courses = Course.objects.filter(created_by=request.user) if request.user.profile.is_instructor else None
+    return render(request, 'announcements/announcement_list.html', {'announcements': announcements, 'courses': courses})
+
