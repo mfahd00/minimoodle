@@ -5,30 +5,67 @@
 {% block content %}
 <div class="container py-4">
 
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- 🏷️ Page Heading -->
+  <div class="mb-3">
     <h2 class="fw-bold section-heading">All Courses</h2>
-
-    <div class="sort-options">
-      <span class="section-subheading me-2">Sort by:</span>
-      <a href="?sort=popular"
-        class="btn btn-sm btn-outline-info {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">
-        Popular
-      </a>
-      <a href="?sort=newest" class="btn btn-sm btn-outline-info {% if request.GET.sort == 'newest' %}active{% endif %}">
-        Newest
-      </a>
-      <a href="?sort=oldest" class="btn btn-sm btn-outline-info {% if request.GET.sort == 'oldest' %}active{% endif %}">
-        Oldest
-      </a>
-    </div>
   </div>
 
+  <!-- 🔹 Filter Row -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 border-bottom pb-2">
+
+    <!-- Sort By -->
+    <div class="d-flex align-items-center flex-wrap gap-2">
+      <h6 class="fw-semibold mb-0 me-2 text-muted">Sort by:</h6>
+      <a href="?sort=popular{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+         class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">
+         Popular
+      </a>
+      <a href="?sort=newest{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+         class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'newest' %}active{% endif %}">
+         Newest
+      </a>
+      <a href="?sort=oldest{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
+         class="btn btn-sm btn-outline-primary {% if request.GET.sort == 'oldest' %}active{% endif %}">
+         Oldest
+      </a>
+    </div>
+
+    <!-- Browse by Category -->
+    {% if categories %}
+    <div class="dropdown mt-2 mt-md-0">
+      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {% if request.GET.category %}
+          {% for cat in categories %}
+            {% if cat.id|stringformat:'s' == request.GET.category %}
+              {{ cat.name }}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          Browse by Category
+        {% endif %}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+          <a class="dropdown-item {% if not request.GET.category %}active{% endif %}" href="{% url 'course_list' %}">All</a>
+        </li>
+        {% for cat in categories %}
+        <li>
+          <a class="dropdown-item {% if request.GET.category|default:'' == cat.id|stringformat:'s' %}active{% endif %}"
+             href="?category={{ cat.id }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+             {{ cat.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 🎓 Course Cards -->
   <div class="row g-4">
     {% for course in page_obj %}
     <div class="col-md-6 col-lg-4">
       <div class="course-card h-100 p-4 d-flex flex-column">
-
         <h5 class="fw-bold mb-2">
           <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-subheading">
             {{ course.title }}
@@ -45,7 +82,7 @@
         <p class="small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
 
         <div class="mt-auto">
-          <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold ">
+          <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold">
             View Course
           </a>
         </div>
@@ -59,14 +96,14 @@
     {% endfor %}
   </div>
 
-
+  <!-- 📄 Pagination -->
   <div class="mt-5">
     <nav aria-label="Page navigation">
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
         <li class="page-item">
           <a class="page-link custom-page-link"
-            href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
             Previous
           </a>
         </li>
@@ -82,7 +119,7 @@
         {% else %}
         <li class="page-item">
           <a class="page-link custom-page-link"
-            href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
             {{ num }}
           </a>
         </li>
@@ -92,7 +129,7 @@
         {% if page_obj.has_next %}
         <li class="page-item">
           <a class="page-link custom-page-link"
-            href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+            href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
             Next
           </a>
         </li>
@@ -103,4 +140,14 @@
     </nav>
   </div>
 </div>
+{% if user.is_authenticated and user.profile.is_instructor %}
+<div class="fab-container position-fixed" style="bottom: 30px; right: 30px; z-index: 1050;">
+  <a href="{% url 'create_course' %}" class="fab-btn d-flex align-items-center justify-content-center text-white text-decoration-none">
+    <span class="fab-icon">+</span>
+    <span class="fab-text ms-2">Create</span>
+  </a>
+</div>
+{% endif %}
+
+
 {% endblock %}

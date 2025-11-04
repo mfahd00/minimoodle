@@ -242,6 +242,69 @@ input[type="submit"]:disabled {
   z-index: 1;
 }
 
+.fab-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.fab-btn {
+  background-color: #0d6efd; /* Bootstrap primary blue */
+  color: #fff !important;
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  width: 60px;
+  height: 60px;
+}
+
+.fab-icon {
+  font-size: 1.6rem;
+  transition: transform 0.3s ease;
+}
+
+.fab-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+/* Hover animation */
+.fab-btn:hover {
+  width: 180px;
+  justify-content: flex-start;
+  padding-left: 1.2rem;
+  transform: translateY(-3px);
+  background-color: #0b5ed7; /* darker blue on hover */
+}
+
+.fab-btn:hover .fab-text {
+  opacity: 1;
+  width: auto;
+  margin-left: 10px;
+}
+
+.fab-btn:hover .fab-icon {
+  transform: rotate(90deg);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .fab-btn {
+    background-color: #1d4ed8; /* soft indigo */
+  }
+  .fab-btn:hover {
+    background-color: #2563eb;
+  }
+}
 
 
 

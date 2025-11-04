@@ -43,6 +43,7 @@ class Lesson(models.Model):
     content = models.TextField()
     video_url = models.URLField(blank=True, null=True)
     course = models.ForeignKey(Course, related_name='lessons', on_delete=models.CASCADE)
+    material = models.FileField(upload_to='lessons/materials/', blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -71,7 +72,7 @@ class Assignment(models.Model):
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, related_name='submissions', on_delete=models.CASCADE)
     student = models.ForeignKey(User, related_name='submissions', on_delete=models.CASCADE)
-    submitted_file = models.FileField(upload_to='submissions/')
+    submitted_file = models.FileField(upload_to='')
     submitted_at = models.DateTimeField(auto_now_add=True)
     grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     feedback = models.TextField(blank=True, null=True)

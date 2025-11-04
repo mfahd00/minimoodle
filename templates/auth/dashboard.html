@@ -5,14 +5,34 @@
 {% block content %}
 <div class="container py-4">
 
+  
+
   {% if is_instructor %}
   <div class="text-center mb-5">
     <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
-    <p class=" section-subheading mb-0">Your learning and teaching hub</p>
+    <p class="section-subheading mb-0">Your learning and teaching hub</p>
   </div>
-  {% endif %}
 
-  {% if is_instructor %}
+  {% if latest_announcement %}
+<div class="course-card announcement-card mb-5 p-4 w-100">
+  <h4 class="fw-bold section-heading mb-2"> Latest Announcement</h4>
+  <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
+  <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
+  <small class="d-block mb-2">
+    Posted in <strong>{{ latest_announcement.course.title }}</strong>
+    by {{ latest_announcement.created_by.username }}
+    on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
+  </small>
+  <div class="text-end">
+    <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
+      View Course
+    </a>
+  </div>
+</div>
+{% endif %}
+
+
+
   <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
 
   {% if courses %}
@@ -40,8 +60,9 @@
   {% else %}
   <div class="empty-state text-center py-5 mb-5">
     <p class="mb-3 text-muted">You haven’t created any courses yet.</p>
-    <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2 rounded-pill text-dark fw-semibold">+ Create a
-      Course</a>
+    <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2 rounded-pill text-dark fw-semibold">
+      + Create a Course
+    </a>
   </div>
   {% endif %}
 
@@ -69,6 +90,23 @@
     <h3 class="fw-bold section-heading">Welcome back, {{ user.username }} 👋</h3>
   </div>
 
+{% if latest_announcement %}
+<div class="course-card announcement-card mb-5 p-4 w-100">
+  <h4 class="fw-bold section-heading mb-2"> Latest Announcement</h4>
+  <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
+  <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
+  <small class="d-block mb-2">
+    Posted in <strong>{{ latest_announcement.course.title }}</strong>
+    by {{ latest_announcement.created_by.username }}
+    on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
+  </small>
+  <div class="text-end">
+    <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
+      View Course
+    </a>
+  </div>
+</div>
+{% endif %}
 
   <div class="row g-4 mt-3">
     <div class="col-md-4">
@@ -80,7 +118,6 @@
         </a>
       </div>
     </div>
-
 
     <div class="col-md-4">
       <div class="course-card text-center p-4 h-100">
@@ -103,7 +140,6 @@
     </div>
   </div>
 
-
   <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
 
   {% if enrollments %}
@@ -120,7 +156,8 @@
         {% if enrollment.course.category %}
         <span class="badge badge-cat mb-2">{{ enrollment.course.category.name }}</span>
         {% endif %}
-        <p class="text-secondary small mb-2"><strong>Instructor:</strong> {{ enrollment.course.created_by.username }}
+        <p class="text-secondary small mb-2">
+          <strong>Instructor:</strong> {{ enrollment.course.created_by.username }}
         </p>
 
         <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>

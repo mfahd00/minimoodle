@@ -86,10 +86,22 @@ def home(request):
     return render(request, 'index.html', {'latest_courses': latest_courses})
 
 
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.shortcuts import render
+from .models import Course, Category
+
 def course_list(request):
     sort_by = request.GET.get('sort', 'popular')
+    category_id = request.GET.get('category')
+
     courses = Course.objects.annotate(num_students=Count('enrollment')).all()
 
+    # Filter by category (if selected)
+    if category_id:
+        courses = courses.filter(category_id=category_id)
+
+    # Sorting logic
     if sort_by == 'popular':
         courses = courses.order_by('-num_students')
     elif sort_by == 'newest':
@@ -97,10 +109,13 @@ def course_list(request):
     elif sort_by == 'oldest':
         courses = courses.order_by('created_at')
 
-    categories = Category.objects.all()
+    # Pagination
     paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    # Fetch all categories for the browse section
+    categories = Category.objects.all()
 
     return render(request, 'courses/course_list.html', {
         'page_obj': page_obj,
@@ -110,16 +125,27 @@ def course_list(request):
     })
 
 
+
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     lessons = course.lessons.all()
     enrolled = False
+    submissions = {}
+
     if request.user.is_authenticated:
         enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+
+        # store which assignments are already submitted by this student
+        for assignment in course.assignments.all():
+            submissions[assignment.id] = Submission.objects.filter(
+                assignment=assignment, student=request.user
+            ).exists()
+
     return render(request, 'courses/course_detail.html', {
         'course': course,
         'lessons': lessons,
         'enrolled': enrolled,
+        'submissions': submissions,
     })
 
 
@@ -132,24 +158,26 @@ def enroll_course(request, course_id):
 
 from django.db.models import Q
 
+
 @login_required
 def dashboard(request):
     user = request.user
+    latest_announcement = Announcement.objects.order_by('-created_at').first()
 
     if user.profile.is_instructor:
         courses = Course.objects.filter(created_by=user)
         enrollments = Enrollment.objects.filter(course__in=courses).select_related('student')
-        students = list({enrollment.student for enrollment in enrollments})  
+        students = list({enrollment.student for enrollment in enrollments})
 
         return render(request, 'auth/dashboard.html', {
             'is_instructor': True,
             'courses': courses,
             'students': students,
+            'latest_announcement': latest_announcement,
         })
 
     else:
         enrollments = user.enrollments.select_related('course').distinct()
-
 
         for enrollment in enrollments:
             total = enrollment.course.lessons.count()
@@ -157,7 +185,6 @@ def dashboard(request):
             enrollment.progress = int((completed / total) * 100) if total > 0 else 0
 
         now = timezone.now()
-
 
         pending_assignments = Assignment.objects.filter(
             course__in=[en.course for en in enrollments],
@@ -176,8 +203,9 @@ def dashboard(request):
             'is_instructor': False,
             'enrollments': enrollments,
             'pending_assignments': pending_assignments,
-            'pending_count': pending_count,       
-            'remaining_classes': remaining_classes  
+            'pending_count': pending_count,
+            'remaining_classes': remaining_classes,
+            'latest_announcement': latest_announcement,
         })
 
 
@@ -378,58 +406,29 @@ def announcement_list(request, course_id):
         'announcements': announcements,
     })
 
-@login_required
-def create_announcement(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
+def create_announcement(request):
     if not request.user.profile.is_instructor:
-        return redirect('announcement_list', course_id=course.id)
+        return redirect('global_announcement_list')
+
+    courses = Course.objects.filter(created_by=request.user)
 
     if request.method == 'POST':
         form = AnnouncementForm(request.POST)
         if form.is_valid():
             announcement = form.save(commit=False)
-            announcement.course = course
+            course_id = request.POST.get('course_id')
+            if course_id:
+                announcement.course = get_object_or_404(Course, id=course_id)
             announcement.created_by = request.user
             announcement.save()
-            return redirect('announcement_list', course_id=course.id)
+            return redirect('global_announcement_list')
     else:
         form = AnnouncementForm()
 
     return render(request, 'announcements/announcement_form.html', {
         'form': form,
-        'course': course,
+        'courses': courses,
     })
-
-@login_required
-def edit_announcement(request, course_id, announcement_id):
-    course = get_object_or_404(Course, id=course_id)
-    announcement = get_object_or_404(Announcement, id=announcement_id, course=course)
-
-    if not request.user.profile.is_instructor:
-        return redirect('announcement_list', course_id=course.id)
-
-    if request.method == 'POST':
-        form = AnnouncementForm(request.POST, instance=announcement)
-        if form.is_valid():
-            form.save()
-            return redirect('announcement_list', course_id=course.id)
-    else:
-        form = AnnouncementForm(instance=announcement)
-
-    return render(request, 'announcements/announcement_form.html', {
-        'form': form,
-        'course': course,
-    })
-
-@login_required
-def delete_announcement(request, course_id, announcement_id):
-    course = get_object_or_404(Course, id=course_id)
-    announcement = get_object_or_404(Announcement, id=announcement_id, course=course)
-
-    if request.user.profile.is_instructor:
-        announcement.delete()
-
-    return redirect('announcement_list', course_id=course.id)
 
 @login_required
 def global_announcement_list(request):
