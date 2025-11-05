@@ -7,6 +7,11 @@
   <div class="form-container shadow-lg p-4" style="max-width: 460px; width: 100%; border-radius: 15px;">
 
     <h2 class="fw-bold text-center mb-4">Instructor Registration</h2>
+    {% if form.errors %}
+<div class="alert alert-danger" role="alert">
+  {{ form.errors }}
+</div>
+{% endif %}
 
     <form method="post" id="instructorRegistrationForm" novalidate>
       {% csrf_token %}

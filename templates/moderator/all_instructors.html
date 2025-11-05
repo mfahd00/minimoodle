@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}All Instructors | LAP{% endblock %}
+
+{% block content %}
+<div class="container py-4 d-flex justify-content-center">
+  <div class="overlay-box w-100" style="max-width: 900px;">
+    <div class="p-4">
+      <h3 class="fw-bold mb-4 text-center section-heading">All Instructors</h3>
+
+      {% if instructors %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle text-center mb-0">
+          <thead class="table-gradient text-white">
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for instructor in instructors %}
+            <tr class="align-middle">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ instructor.username }}</td>
+              <td>{{ instructor.email }}</td>
+              <td>
+                {% if instructor.profile.is_approved %}
+                  <span class="badge bg-success">Approved</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if not instructor.profile.is_approved %}
+                  <a href="{% url 'approve_instructor' instructor.id %}" class="btn btn-gradient btn-sm  px-3">
+                    Approve
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-center text-muted">No instructors found.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.table-gradient {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+.table tbody tr:hover {
+  background-color: rgba(0,0,0,0.05);
+  transition: 0.2s;
+}
+.table th, .table td {
+  vertical-align: middle;
+}
+.table {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+</style>
+{% endblock %}

@@ -98,32 +98,62 @@ body.light-theme .hover-shadow:hover {
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto align-items-center">
-          {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'global_announcement_list' %}">Announcements</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'course_list' %}">Courses</a></li>
+  <ul class="navbar-nav ms-auto align-items-center">
 
-            <li class="nav-item">
-              <form method="post" action="{% url 'logout' %}" class="d-inline">
-                {% csrf_token %}
-                <a href="#" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
-              </form>
-            </li>
-          {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
-          {% endif %}
+    {% if user.is_authenticated and user.profile.is_moderator %}
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+          <i class="bi bi-speedometer2 me-1"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'pending_instructors' %}active{% endif %}" href="{% url 'pending_instructors' %}">
+          <i class="bi bi-person-check me-1"></i> Approvals
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'all_instructors' %}active{% endif %}" href="{% url 'all_instructors' %}">
+          <i class="bi bi-people me-1"></i> Instructors
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'moderator_stats' %}active{% endif %}" href="{% url 'moderator_stats' %}">
+          <i class="bi bi-graph-up me-1"></i> Stats
+        </a>
+      </li>
+      <li class="nav-item">
+        <form method="post" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <a href="#" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+        </form>
+      </li>
 
-          <li class="nav-item ms-3">
-            <div class="theme-switch" id="theme-toggle">
-              <div class="switch-circle"></div>
-              <div class="icon sun">☀️</div>
-              <div class="icon moon">🌙</div>
-            </div>
-          </li>
-        </ul>
+    {% elif user.is_authenticated %}
+      <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'global_announcement_list' %}active{% endif %}" href="{% url 'global_announcement_list' %}">Announcements</a></li>
+      <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'course_list' %}active{% endif %}" href="{% url 'course_list' %}">Courses</a></li>
+      <li class="nav-item">
+        <form method="post" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <a href="#" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+        </form>
+      </li>
+
+    {% else %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+    {% endif %}
+
+    <li class="nav-item ms-3">
+      <div class="theme-switch" id="theme-toggle">
+        <div class="switch-circle"></div>
+        <div class="icon sun">☀️</div>
+        <div class="icon moon">🌙</div>
       </div>
+    </li>
+  </ul>
+</div>
+
     </div>
   </nav>
 

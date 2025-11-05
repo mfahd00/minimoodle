@@ -18,9 +18,16 @@ urlpatterns = [
     path('register/instructor/', views.register_instructor, name='register_instructor'),
 
     path('login/', views.login_page, name='login'),
+    path('login/moderator/', views.login_moderator, name='login_moderator'),
     path('login/student/', views.login_student, name='login_student'),
     path('login/instructor/', views.login_instructor, name='login_instructor'),
     path('logout/', views.logout_view, name='logout'),
+
+    path('moderator/pending/', views.pending_instructors, name='pending_instructors'),
+    path('moderator/approve/<int:user_id>/', views.approve_instructor, name='approve_instructor'),
+    path('moderator/instructors/', views.all_instructors, name='all_instructors'),
+    path('moderator/stats/', views.moderator_stats, name='moderator_stats'),
+
 
     path('dashboard/', views.dashboard, name='dashboard'),
     path('courses/category/<int:category_id>/', views.courses_by_category, name='courses_by_category'),

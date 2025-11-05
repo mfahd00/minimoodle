@@ -8,38 +8,43 @@
 
 
   <div class="overlay-box p-4 mb-5">
-    <h2 class="section-heading mb-3">{{ course.title }}</h2>
-    <p class="fs-5 mb-3">{{ course.description }}</p>
+  <h2 class="section-heading mb-3">{{ course.title }}</h2>
+  <p class="fs-5 mb-3">{{ course.description }}</p>
 
-    <p class="mb-4">
-      <strong>Category:</strong>
-      {% if course.category %}
-        <span class="badge badge-cat ms-2">{{ course.category.name }}</span>
-      {% else %}
-        <span class="badge badge-uncat ms-2">Uncategorized</span>
-      {% endif %}
-    </p>
+  <p class="mb-4">
+    <strong>Category:</strong>
+    {% if course.category %}
+      <span class="badge badge-cat ms-2">{{ course.category.name }}</span>
+    {% else %}
+      <span class="badge badge-uncat ms-2">Uncategorized</span>
+    {% endif %}
+  </p>
 
-    {% if user.is_authenticated %}
-      {% if user.profile.is_instructor or user == course.created_by %}
+  {% if user.is_authenticated %}
+    {% if user.profile.is_instructor %}
+      {% if user == course.created_by %}
         <p class="fw-semibold section-heading">👩‍🏫 You’re the instructor for this course.</p>
       {% else %}
-        {% if enrolled %}
-          <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
-        {% else %}
-          <form action="{% url 'enroll_course' course.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary px-4">Enroll Now</button>
-          </form>
-        {% endif %}
+        <p class="fw-semibold section-heading">👨‍🏫 Instructor of this course is: {{ course.created_by.username }}</p>
       {% endif %}
     {% else %}
-      <p>
-        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-info px-4">
-          Login to Enroll
-        </a>
-      </p>
+      {% if enrolled %}
+        <p class="fw-semibold text-success">✅ You’re enrolled in this course.</p>
+      {% else %}
+        <form action="{% url 'enroll_course' course.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary px-4">Enroll Now</button>
+        </form>
+      {% endif %}
     {% endif %}
+  {% else %}
+    <p>
+      <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-info px-4">
+        Login to Enroll
+      </a>
+    </p>
+  {% endif %}
+
 
     {% if user.is_authenticated and user.profile.is_instructor and user == course.created_by %}
       <div class="d-flex flex-wrap gap-2 mt-3">
@@ -110,16 +115,17 @@
           </div>
 
           {% if user.is_authenticated %}
-            {% if user.profile.is_instructor and user == course.created_by %}
-              <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-outline-secondary btn-sm">📂 View</a>
-            {% else %}
-              {% if submissions|dict_get:assignment.id %}
-                <button class="btn btn-sm" style="background: linear-gradient(135deg, #0a58ca, #084bb5); color: #fff; cursor: default;">✅ Submitted</button>
-              {% else %}
-                <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-outline-info btn-sm">Submit</a>
-              {% endif %}
-            {% endif %}
-          {% endif %}
+    {% if user.profile.is_instructor and user == course.created_by %}
+        <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-outline-secondary btn-sm">📂 View</a>
+    {% elif user.profile.is_student %}
+        {% if submissions|dict_get:assignment.id %}
+            <button class="btn btn-sm" style="background: linear-gradient(135deg, #0a58ca, #084bb5); color: #fff; cursor: default;">✅ Submitted</button>
+        {% else %}
+            <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-outline-info btn-sm">Submit</a>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
         </li>
       {% endfor %}
     </ul>

@@ -5,172 +5,200 @@
 {% block content %}
 <div class="container py-4">
 
-  
+  {% if is_moderator %}
+    <div class="text-center mb-5">
+      <h2 class="fw-bold section-heading mb-2">Moderator Dashboard</h2>
+      <p class="section-subheading mb-0">Manage instructor approvals and platform overview</p>
+    </div>
 
-  {% if is_instructor %}
-  <div class="text-center mb-5">
-    <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
-    <p class="section-subheading mb-0">Your learning and teaching hub</p>
-  </div>
-
-  {% if latest_announcement %}
-<div class="course-card announcement-card mb-5 p-4 w-100">
-  <h4 class="fw-bold section-heading mb-2"> Latest Announcement</h4>
-  <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
-  <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
-  <small class="d-block mb-2">
-    Posted in <strong>{{ latest_announcement.course.title }}</strong>
-    by {{ latest_announcement.created_by.username }}
-    on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
-  </small>
-  <div class="text-end">
-    <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
-      View Course
-    </a>
-  </div>
-</div>
-{% endif %}
-
-
-
-  <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
-
-  {% if courses %}
-  <div class="row g-4 mb-5">
-    {% for course in courses %}
-    <div class="col-md-6 col-lg-4">
-      <div class="course-card h-100 p-4 d-flex flex-column">
-        <h5 class="fw-bold text-info mb-2">
-          <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-heading">
-            {{ course.title }}
+    <div class="row g-4 mt-3">
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-warning mb-1">Pending Approvals</h5>
+          <p class="display-6 fw-bold mb-2">{{ pending_instructors_count|default:"0" }}</p>
+          <a href="{% url 'pending_instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
+            View Pending Instructors
           </a>
-        </h5>
-        <p class="text-secondary small mb-3">
-          {{ course.enrollment_set.count }} student{{ course.enrollment_set.count|pluralize }}
-        </p>
+        </div>
+      </div>
 
-        <div class="mt-auto d-flex justify-content-between">
-          <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-info btn-sm flex-grow-1 me-1">Edit</a>
-          <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-danger btn-sm flex-grow-1">Delete</a>
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-info mb-1">Total Instructors</h5>
+          <p class="display-6 fw-bold mb-2">{{ total_instructors|default:"0" }}</p>
+          <a href="{% url 'all_instructors' %}" class="btn btn-outline-info btn-sm mt-2">
+            View Instructors
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-success mb-1">Platform Stats</h5>
+          <p class="display-6 fw-bold mb-2">{{ platform_stats|default:"0" }}</p>
+          <a href="{% url 'moderator_stats' %}" class="btn btn-outline-success btn-sm mt-2">
+            View Stats
+          </a>
         </div>
       </div>
     </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state text-center py-5 mb-5">
-    <p class="mb-3 text-muted">You haven’t created any courses yet.</p>
-    <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2 rounded-pill text-dark fw-semibold">
-      + Create a Course
-    </a>
-  </div>
-  {% endif %}
 
-  <h3 class="mb-4 fw-semibold section-subheading">Your Students</h3>
-  {% if students %}
-  <div class="row g-4">
-    {% for student in students %}
-    <div class="col-md-6 col-lg-4">
-      <div class="course-card h-100 p-3">
-        <h6 class="fw-bold section-heading mb-1">{{ student.username }}</h6>
-        <p class="small mb-2">{{ student.email }}</p>
-        <p class="small"><strong>Enrolled Courses:</strong> {{ student.enrollments.count }}</p>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state text-center py-4">
-    <p class="text-muted mb-0">No students enrolled in your courses yet.</p>
-  </div>
-  {% endif %}
-
-  {% else %}
-  <div class="text-center mb-5">
-    <h3 class="fw-bold section-heading">Welcome back, {{ user.username }} 👋</h3>
-  </div>
-
-{% if latest_announcement %}
-<div class="course-card announcement-card mb-5 p-4 w-100">
-  <h4 class="fw-bold section-heading mb-2"> Latest Announcement</h4>
-  <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
-  <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
-  <small class="d-block mb-2">
-    Posted in <strong>{{ latest_announcement.course.title }}</strong>
-    by {{ latest_announcement.created_by.username }}
-    on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
-  </small>
-  <div class="text-end">
-    <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
-      View Course
-    </a>
-  </div>
-</div>
-{% endif %}
-
-  <div class="row g-4 mt-3">
-    <div class="col-md-4">
-      <div class="course-card text-center p-4 h-100">
-        <h5 class="fw-bold text-success mb-1">Classes Remaining</h5>
-        <p class="display-6 fw-bold mb-2">{{ remaining_classes|default:"0" }}</p>
-        <a href="{% url 'pending_classes' %}" class="btn btn-outline-success btn-sm mt-2">
-          View Pending Classes
-        </a>
-      </div>
+  {% elif is_instructor %}
+    <div class="text-center mb-5">
+      <h2 class="fw-bold section-heading mb-2">Dashboard</h2>
+      <p class="section-subheading mb-0">Your learning and teaching hub</p>
     </div>
 
-    <div class="col-md-4">
-      <div class="course-card text-center p-4 h-100">
-        <h5 class="fw-bold text-info mb-1">Total Courses</h5>
-        <p class="display-6 fw-bold mb-2">{{ enrollments|length }}</p>
-        <a href="{% url 'course_list' %}" class="btn btn-outline-info btn-sm mt-2">
-          Browse Courses
-        </a>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="course-card text-center p-4 h-100">
-        <h5 class="fw-bold text-warning mb-1">Pending Assignments</h5>
-        <p class="display-6 fw-bold mb-2">{{ pending_count|default:"0" }}</p>
-        <a href="{% url 'student_assignments' %}" class="btn btn-outline-warning btn-sm mt-2">
-          View Pending Assignments
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
-
-  {% if enrollments %}
-  <div class="row g-4">
-    {% for enrollment in enrollments %}
-    <div class="col-md-6 col-lg-4">
-      <div class="course-card h-100 p-4 d-flex flex-column">
-        <h5 class="fw-bold text-info mb-2">
-          <a href="{% url 'course_detail' enrollment.course.id %}" class="text-decoration-none section-heading">
-            {{ enrollment.course.title }}
+    {% if latest_announcement %}
+      <div class="course-card announcement-card mb-5 p-4 w-100">
+        <h4 class="fw-bold section-heading mb-2">Latest Announcement</h4>
+        <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
+        <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
+        <small class="d-block mb-2">
+          Posted in <strong>{{ latest_announcement.course.title }}</strong> by {{ latest_announcement.created_by.username }}
+          on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
+        </small>
+        <div class="text-end">
+          <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
+            View Course
           </a>
-        </h5>
+        </div>
+      </div>
+    {% endif %}
 
-        {% if enrollment.course.category %}
-        <span class="badge badge-cat mb-2">{{ enrollment.course.category.name }}</span>
-        {% endif %}
-        <p class="text-secondary small mb-2">
-          <strong>Instructor:</strong> {{ enrollment.course.created_by.username }}
-        </p>
+    <h3 class="mb-4 fw-semibold section-subheading">Your Courses</h3>
+    {% if courses %}
+      <div class="row g-4 mb-5">
+        {% for course in courses %}
+          <div class="col-md-6 col-lg-4">
+            <div class="course-card h-100 p-4 d-flex flex-column">
+              <h5 class="fw-bold text-info mb-2">
+                <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-heading">
+                  {{ course.title }}
+                </a>
+              </h5>
+              <p class="text-secondary small mb-3">
+                {{ course.enrollment_set.count }} student{{ course.enrollment_set.count|pluralize }}
+              </p>
+              <div class="mt-auto d-flex justify-content-between">
+                <a href="{% url 'edit_course' course.id %}" class="btn btn-outline-info btn-sm flex-grow-1 me-1">Edit</a>
+                <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-danger btn-sm flex-grow-1">Delete</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state text-center py-5 mb-5">
+        <p class="mb-3 text-muted">You haven’t created any courses yet.</p>
+        <a href="{% url 'create_course' %}" class="btn btn-info px-4 py-2  text-dark fw-semibold">
+          + Create a Course
+        </a>
+      </div>
+    {% endif %}
 
-        <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>
+    <h3 class="mb-4 fw-semibold section-subheading">Your Students</h3>
+    {% if students %}
+      <div class="row g-4">
+        {% for student in students %}
+          <div class="col-md-6 col-lg-4">
+            <div class="course-card h-100 p-3">
+              <h6 class="fw-bold section-heading mb-1">{{ student.username }}</h6>
+              <p class="small mb-2">{{ student.email }}</p>
+              <p class="small"><strong>Enrolled Courses:</strong> {{ student.enrollments.count }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state text-center py-4">
+        <p class="text-muted mb-0">No students enrolled in your courses yet.</p>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="text-center mb-5">
+      <h3 class="fw-bold section-heading">Welcome back, {{ user.username }} 👋</h3>
+    </div>
+
+    {% if latest_announcement %}
+      <div class="course-card announcement-card mb-5 p-4 w-100">
+        <h4 class="fw-bold section-heading mb-2">Latest Announcement</h4>
+        <h5 class="fw-semibold mb-2">{{ latest_announcement.title }}</h5>
+        <p class="mb-2">{{ latest_announcement.message|truncatewords:30 }}</p>
+        <small class="d-block mb-2">
+          Posted in <strong>{{ latest_announcement.course.title }}</strong> by {{ latest_announcement.created_by.username }}
+          on {{ latest_announcement.created_at|date:"M d, Y H:i" }}
+        </small>
+        <div class="text-end">
+          <a href="{% url 'course_detail' latest_announcement.course.id %}" class="btn btn-outline-primary btn-sm">
+            View Course
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row g-4 mt-3">
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-success mb-1">Classes Remaining</h5>
+          <p class="display-6 fw-bold mb-2">{{ remaining_classes|default:"0" }}</p>
+          <a href="{% url 'pending_classes' %}" class="btn btn-outline-success btn-sm mt-2">
+            View Pending Classes
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-info mb-1">Total Courses</h5>
+          <p class="display-6 fw-bold mb-2">{{ enrollments|length }}</p>
+          <a href="{% url 'course_list' %}" class="btn btn-outline-info btn-sm mt-2">
+            Browse Courses
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="course-card text-center p-4 h-100">
+          <h5 class="fw-bold text-warning mb-1">Pending Assignments</h5>
+          <p class="display-6 fw-bold mb-2">{{ pending_count|default:"0" }}</p>
+          <a href="{% url 'student_assignments' %}" class="btn btn-outline-warning btn-sm mt-2">
+            View Pending Assignments
+          </a>
+        </div>
       </div>
     </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state text-center py-5">
-    <p class="mb-3 text-muted">You haven’t enrolled in any courses yet.</p>
-    <a href="{% url 'course_list' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Browse Courses</a>
-  </div>
-  {% endif %}
+
+    <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
+    {% if enrollments %}
+      <div class="row g-4">
+        {% for enrollment in enrollments %}
+          <div class="col-md-6 col-lg-4">
+            <div class="course-card h-100 p-4 d-flex flex-column">
+              <h5 class="fw-bold text-info mb-2">
+                <a href="{% url 'course_detail' enrollment.course.id %}" class="text-decoration-none section-heading">
+                  {{ enrollment.course.title }}
+                </a>
+              </h5>
+              {% if enrollment.course.category %}
+                <span class="badge badge-cat mb-2">{{ enrollment.course.category.name }}</span>
+              {% endif %}
+              <p class="text-secondary small mb-2">
+                <strong>Instructor:</strong> {{ enrollment.course.created_by.username }}
+              </p>
+              <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state text-center py-5">
+        <p class="mb-3 text-muted">You haven’t enrolled in any courses yet.</p>
+        <a href="{% url 'course_list' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Browse Courses</a>
+      </div>
+    {% endif %}
+
   {% endif %}
 </div>
 {% endblock %}

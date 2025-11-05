@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Moderator Stats | LAP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold section-heading mb-2">Moderator Stats</h2>
+    <p class="section-subheading mb-0">Overview of instructors and students on the platform</p>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <div class="col-md-3 col-sm-6">
+      <div class="course-card text-center p-4 h-100">
+        <h5 class="fw-bold text-primary mb-1">Total Instructors</h5>
+        <p class="display-6 fw-bold mb-2">{{ total_instructors }}</p>
+        <a href="{% url 'all_instructors' %}" class="btn btn-outline-primary btn-sm mt-2">View All</a>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+  <div class="course-card text-center p-4 h-100">
+    <h5 class="fw-bold text-success mb-1">Approved Instructors</h5>
+    <p class="display-6 fw-bold mb-2">{{ approved_instructors|default:0|default_if_none:0 }}</p>
+    <a href="{% url 'all_instructors' %}" class="btn btn-outline-success btn-sm mt-2">
+      View Approved
+    </a>
+  </div>
+</div>
+
+<div class="col-md-3 col-sm-6">
+  <div class="course-card text-center p-4 h-100">
+    <h5 class="fw-bold text-warning mb-1">Pending Approvals</h5>
+    <p class="display-6 fw-bold mb-2">{{ pending_instructors|default:0|default_if_none:0 }}</p>
+    <a href="{% url 'pending_instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
+      View Pending
+    </a>
+  </div>
+</div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="course-card text-center p-4 h-100">
+        <h5 class="fw-bold text-info mb-1">Total Students</h5>
+        <p class="display-6 fw-bold mb-2">{{ total_students }}</p>
+        <p class=" small mt-2">No student list page yet</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

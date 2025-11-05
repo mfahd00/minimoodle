@@ -8,9 +8,12 @@ from django.utils import timezone
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_instructor = models.BooleanField(default=False)
+    is_moderator = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)  
 
     def __str__(self):
         return self.user.username
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
