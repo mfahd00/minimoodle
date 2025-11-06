@@ -15,7 +15,12 @@
         <label class="form-label fw-medium">Username</label>
         {{ form.username|add_class:"form-control" }}
       </div>
-
+      
+      <div class="mb-3">
+        <label class="form-label fw-medium">Department</label>
+        {{ form.department|add_class:"form-select" }}
+      </div>
+      
       <div class="mb-3">
         <label class="form-label fw-medium">Email</label>
         {{ form.email|add_class:"form-control" }}
@@ -31,6 +36,7 @@
         {{ form.password2|add_class:"form-control" }}
       </div>
 
+
       <button type="submit" class="btn w-100 py-2">Register as Student</button>
     </form>
 
@@ -45,7 +51,7 @@
     font-weight: 700;
   }
 
-  .form-control {
+  .form-control, .form-select {
     border-radius: 8px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -54,7 +60,7 @@
     transition: all 0.3s ease;
   }
 
-  .form-control:focus {
+  .form-control:focus, .form-select:focus {
     border-color: #2a7df5;
     box-shadow: 0 0 8px rgba(42, 125, 245, 0.5);
   }
@@ -71,7 +77,8 @@
     color: #f8f9fa !important;
   }
 
-  body.dark-mode .form-control {
+  body.dark-mode .form-control,
+  body.dark-mode .form-select {
     background-color: rgba(255, 255, 255, 0.08);
     color: #f8f9fa;
     border: 1px solid rgba(255, 255, 255, 0.2);

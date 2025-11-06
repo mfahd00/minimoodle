@@ -7,11 +7,12 @@
   <div class="form-container shadow-lg p-4" style="max-width: 460px; width: 100%; border-radius: 15px;">
 
     <h2 class="fw-bold text-center mb-4">Instructor Registration</h2>
+
     {% if form.errors %}
-<div class="alert alert-danger" role="alert">
-  {{ form.errors }}
-</div>
-{% endif %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.errors }}
+    </div>
+    {% endif %}
 
     <form method="post" id="instructorRegistrationForm" novalidate>
       {% csrf_token %}
@@ -19,6 +20,11 @@
       <div class="mb-3">
         <label class="form-label fw-medium">Username</label>
         {{ form.username|add_class:"form-control" }}
+      </div>
+      
+      <div class="mb-3">
+        <label class="form-label fw-medium">Department</label>
+        {{ form.department|add_class:"form-select" }}
       </div>
 
       <div class="mb-3">
@@ -36,6 +42,7 @@
         {{ form.password2|add_class:"form-control" }}
       </div>
 
+
       <button type="submit" class="btn w-100 py-2">Register as Instructor</button>
     </form>
 
@@ -46,12 +53,11 @@
 </div>
 
 <style>
-
   .form-container h2 {
     font-weight: 700;
   }
 
-  .form-control {
+  .form-control, .form-select {
     border-radius: 8px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -60,18 +66,16 @@
     transition: all 0.3s ease;
   }
 
-  .form-control:focus {
+  .form-control:focus, .form-select:focus {
     border-color: #2a7df5;
     box-shadow: 0 0 8px rgba(42, 125, 245, 0.5);
   }
 
- 
   body.light-mode .form-label, 
   body.light-mode p, 
   body.light-mode a {
     color: #212529 !important;
   }
-
 
   body.dark-mode .form-label, 
   body.dark-mode p, 
@@ -79,18 +83,11 @@
     color: #f8f9fa !important;
   }
 
-  body.dark-mode .form-control {
+  body.dark-mode .form-control,
+  body.dark-mode .form-select {
     background-color: rgba(255, 255, 255, 0.08);
     color: #f8f9fa;
     border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  input::placeholder {
-    color: #6c757d !important;
-  }
-
-  body.dark-mode input::placeholder {
-    color: #d1d1d1 !important;
   }
 
   .btn {

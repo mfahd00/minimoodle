@@ -11,14 +11,25 @@
   <h2 class="section-heading mb-3">{{ course.title }}</h2>
   <p class="fs-5 mb-3">{{ course.description }}</p>
 
-  <p class="mb-4">
-    <strong>Category:</strong>
-    {% if course.category %}
-      <span class="badge badge-cat ms-2">{{ course.category.name }}</span>
-    {% else %}
-      <span class="badge badge-uncat ms-2">Uncategorized</span>
+  <p class="mb-4 d-flex align-items-center flex-wrap gap-2">
+  <strong>Category:</strong>
+  {% if course.category %}
+    <span class="badge badge-cat">{{ course.category.name }}</span>
+  {% else %}
+    <span class="badge badge-uncat">Uncategorized</span>
+  {% endif %}
+
+  {% if course.difficulty %}
+    {% if course.difficulty == "beginner" %}
+      <span class="badge badge-beg">Beginner</span>
+    {% elif course.difficulty == "intermediate" %}
+      <span class="badge badge-int">Intermediate</span>
+    {% elif course.difficulty == "hard" %}
+      <span class="badge badge-hard">Hard</span>
     {% endif %}
-  </p>
+  {% endif %}
+</p>
+
 
   {% if user.is_authenticated %}
     {% if user.profile.is_instructor %}

@@ -1,11 +1,14 @@
 from django import forms
-from .models import Course, Lesson, Assignment, Submission, Announcement
+from .models import Course, Lesson, Assignment, Submission, Announcement, Profile, Department
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['title', 'description', 'category']
+        fields = ['title', 'description', 'category', 'difficulty']
+        widgets = {
+            'difficulty': forms.Select(attrs={'class': 'form-select'}),
+        }
 
 class LessonForm(forms.ModelForm):
     class Meta:
@@ -54,14 +57,47 @@ class AnnouncementForm(forms.ModelForm):
         
 class InstructorRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2', 'department']
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
+            profile = user.profile
+            profile.department = self.cleaned_data['department']
+            profile.is_instructor = True
+            profile.save()
+        return user
+
+
+class StudentRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'department']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+            profile = user.profile
+            profile.department = self.cleaned_data['department']
+            profile.is_instructor = False
+            profile.save()
         return user

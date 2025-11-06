@@ -9,10 +9,12 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_instructor = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=False)  
+    is_approved = models.BooleanField(default=False)
+    department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
+
 
 
 @receiver(post_save, sender=User)
@@ -27,10 +29,17 @@ class Category(models.Model):
         return self.name
 
 class Course(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('hard', 'Hard'),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -38,7 +47,8 @@ class Course(models.Model):
 
     @property
     def student_count(self):
-        return self.enrollment_set.count()  
+        return self.enrollment_set.count()
+
 
 
 class Lesson(models.Model):
@@ -96,3 +106,12 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title
+
+class Department(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    code = models.CharField(max_length=10, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+

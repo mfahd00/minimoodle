@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required ,user_passes_test
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -9,19 +8,17 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.utils import timezone
 from .models import Course, Lesson, Enrollment, Profile, Category, Assignment, Submission, Announcement
-from .forms import CourseForm, LessonForm, CustomUserCreationForm, AssignmentForm, SubmissionForm, AnnouncementForm, InstructorRegistrationForm
+from .forms import CourseForm, LessonForm, StudentRegistrationForm, AssignmentForm, SubmissionForm, AnnouncementForm, InstructorRegistrationForm
 
 def register_student(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = StudentRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.profile.is_instructor = False
-            user.profile.save()
             login(request, user)
             return redirect('dashboard')
     else:
-        form = UserCreationForm()
+        form = StudentRegistrationForm()
     return render(request, 'auth/register_student.html', {'form': form, 'page_title': 'Student Registration'})
 
 def login_student(request):

@@ -63,38 +63,49 @@
 
   <!-- 🎓 Course Cards -->
   <div class="row g-4">
-    {% for course in page_obj %}
-    <div class="col-md-6 col-lg-4">
-      <div class="course-card h-100 p-4 d-flex flex-column">
-        <h5 class="fw-bold mb-2">
-          <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-subheading">
-            {{ course.title }}
-          </a>
-        </h5>
+  {% for course in page_obj %}
+  <div class="col-md-6 col-lg-4">
+    <div class="course-card h-100 p-4 d-flex flex-column">
 
+      <h5 class="fw-bold mb-2">
+        <a href="{% url 'course_detail' course.id %}" class="text-decoration-none section-subheading">
+          {{ course.title }}
+        </a>
+      </h5>
+
+      <div class="mb-2 d-flex flex-wrap gap-2">
         {% if course.category %}
-        <span class="badge badge-cat mb-2">{{ course.category.name }}</span>
+          <span class="badge badge-cat">{{ course.category.name }}</span>
         {% else %}
-        <span class="badge bg-secondary mb-2">Uncategorized</span>
+          <span class="badge bg-secondary">Uncategorized</span>
         {% endif %}
 
-        <p class="small mb-1"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
-        <p class="small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
+        {% if course.difficulty == "beginner" %}
+          <span class="badge badge-beg">Beginner</span>
+        {% elif course.difficulty == "intermediate" %}
+          <span class="badge badge-int">Intermediate</span>
+        {% elif course.difficulty == "hard" %}
+          <span class="badge badge-hard">Hard</span>
+        {% endif %}
+      </div>
 
-        <div class="mt-auto">
-          <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold">
-            View Course
-          </a>
-        </div>
+      <p class="small mb-1"><strong>Instructor:</strong> {{ course.created_by.username }}</p>
+      <p class="small mb-3"><strong>Students Enrolled:</strong> {{ course.enrollment_set.count }}</p>
+
+      <div class="mt-auto">
+        <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-info w-100 fw-semibold">
+          View Course
+        </a>
       </div>
     </div>
-    {% empty %}
-    <div class="empty-state text-center py-5">
-      <p class="mb-3 text-muted">No courses found.</p>
-      <a href="{% url 'dashboard' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Go to Dashboard</a>
-    </div>
-    {% endfor %}
   </div>
+  {% empty %}
+  <div class="empty-state text-center py-5">
+    <p class="mb-3 text-muted">No courses found.</p>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-info px-4 py-2 ">Go to Dashboard</a>
+  </div>
+  {% endfor %}
+</div>
 
   <!-- 📄 Pagination -->
   <div class="mt-5">

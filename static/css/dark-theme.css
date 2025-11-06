@@ -174,3 +174,20 @@ option {
   color: #fff;
 }
 
+.badge-beg {
+  background-color: #a3d7a4;  
+  color: #007118;                
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.badge-int {
+  background-color: #e3dfa4;  
+  color: #615102;                
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.badge-hard {
+  background-color: #e3a4a4;  
+  color: #610202;                
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
