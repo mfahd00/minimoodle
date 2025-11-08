@@ -128,7 +128,7 @@
           {% if user.is_authenticated %}
     {% if user.profile.is_instructor and user == course.created_by %}
         <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-outline-secondary btn-sm">📂 View</a>
-    {% elif user.profile.is_student %}
+    {% else %}
         {% if submissions|dict_get:assignment.id %}
             <button class="btn btn-sm" style="background: linear-gradient(135deg, #0a58ca, #084bb5); color: #fff; cursor: default;">✅ Submitted</button>
         {% else %}

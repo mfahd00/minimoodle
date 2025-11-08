@@ -66,9 +66,11 @@ class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     completed_lessons = models.ManyToManyField(Lesson, blank=True)
     enrolled_at = models.DateTimeField(default=timezone.now)
+    is_approved = models.BooleanField(default=False) 
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title}"
+
 
 class Assignment(models.Model):
     course = models.ForeignKey(Course, related_name='assignments', on_delete=models.CASCADE)

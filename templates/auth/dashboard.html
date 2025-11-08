@@ -16,7 +16,7 @@
         <div class="course-card text-center p-4 h-100">
           <h5 class="fw-bold text-warning mb-1">Pending Approvals</h5>
           <p class="display-6 fw-bold mb-2">{{ pending_instructors_count|default:"0" }}</p>
-          <a href="{% url 'pending_instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
+          <a href="{% url 'instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
             View Pending Instructors
           </a>
         </div>
@@ -26,7 +26,7 @@
         <div class="course-card text-center p-4 h-100">
           <h5 class="fw-bold text-info mb-1">Total Instructors</h5>
           <p class="display-6 fw-bold mb-2">{{ total_instructors|default:"0" }}</p>
-          <a href="{% url 'all_instructors' %}" class="btn btn-outline-info btn-sm mt-2">
+          <a href="{% url 'instructors' %}" class="btn btn-outline-info btn-sm mt-2">
             View Instructors
           </a>
         </div>
@@ -151,7 +151,7 @@
 
       <div class="col-md-4">
         <div class="course-card text-center p-4 h-100">
-          <h5 class="fw-bold text-info mb-1">Total Courses</h5>
+          <h5 class="fw-bold text-info mb-1">Enrolled Courses</h5>
           <p class="display-6 fw-bold mb-2">{{ enrollments|length }}</p>
           <a href="{% url 'course_list' %}" class="btn btn-outline-info btn-sm mt-2">
             Browse Courses

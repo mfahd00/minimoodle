@@ -141,50 +141,115 @@ def course_list(request):
 
 
 
+
+@login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     lessons = course.lessons.all()
-    enrolled = False
+    enrolled = Enrollment.objects.filter(course=course, student=request.user).exists()
     submissions = {}
 
-    if request.user.is_authenticated:
-        enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+    if hasattr(request.user, "profile") and not request.user.profile.is_instructor:
+        user_submissions = Submission.objects.filter(
+            assignment__course=course,
+            student=request.user
+        ).select_related("assignment")
+        submissions = {s.assignment.id: True for s in user_submissions}
 
-        for assignment in course.assignments.all():
-            submissions[assignment.id] = Submission.objects.filter(
-                assignment=assignment, student=request.user
-            ).exists()
-
-    return render(request, 'courses/course_detail.html', {
-        'course': course,
-        'lessons': lessons,
-        'enrolled': enrolled,
-        'submissions': submissions,
+    return render(request, "courses/course_detail.html", {
+        "course": course,
+        "lessons": lessons,
+        "enrolled": enrolled,
+        "submissions": submissions,
     })
+
+
 
 def choose_registration(request):
     return render(request, 'auth/choose_registration.html', {
         'page_title': 'Register'
     })
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import Course, Enrollment
+
+
 @login_required
 def enroll_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
-    Enrollment.objects.get_or_create(student=request.user, course=course)
-    return redirect('course_detail', course_id=course.id)
 
+    enrollment, created = Enrollment.objects.get_or_create(
+        student=request.user,
+        course=course,
+        defaults={'is_approved': False, 'enrolled_at': timezone.now()}
+    )
 
-from django.db.models import Q
+    # Existing enrollment
+    if not created:
+        if enrollment.is_approved:
+            messages.info(request, "You are already enrolled in this course.")
+            return redirect('course_detail', course_id=course.id)
+        else:
+            messages.info(request, "Your enrollment request is pending approval.")
+            return render(request, 'students/pending_enrollment.html', {'course': course})
+
+    # Newly created (defaults ensure pending)
+    messages.success(request, "Your enrollment request has been sent for approval.")
+    return render(request, 'students/pending_enrollment.html', {'course': course})
 
 
 @login_required
+def manage_enrollments(request):
+    instructor_courses = Course.objects.filter(created_by=request.user)
+    course_id = request.GET.get('course')
+
+    pending_enrollments = Enrollment.objects.filter(course__in=instructor_courses, is_approved=False)
+    approved_enrollments = Enrollment.objects.filter(course__in=instructor_courses, is_approved=True)
+
+    if course_id:
+        pending_enrollments = pending_enrollments.filter(course_id=course_id)
+        approved_enrollments = approved_enrollments.filter(course_id=course_id)
+
+    pending_count = pending_enrollments.count()
+
+    return render(request, 'instructors/manage_enrollments.html', {
+        'pending_enrollments': pending_enrollments,
+        'approved_enrollments': approved_enrollments,
+        'instructor_courses': instructor_courses,
+        'selected_course': course_id,
+        'pending_count': pending_count,
+    })
 
 
+
+
+@login_required
+def approve_enrollment(request, enrollment_id):
+    enrollment = get_object_or_404(Enrollment, id=enrollment_id, course__created_by=request.user)
+    enrollment.is_approved = True
+    enrollment.save()
+    messages.success(request, f"{enrollment.student.username} has been approved for {enrollment.course.title}.")
+    return redirect('manage_enrollments')
+
+
+@login_required
+def remove_enrollment(request, enrollment_id):
+    enrollment = get_object_or_404(Enrollment, id=enrollment_id, course__created_by=request.user)
+    enrollment.delete()
+    messages.success(request, "Enrollment removed successfully.")
+    return redirect('manage_enrollments')
+
+
+from django.db.models import Q
+@login_required
+@login_required
 def dashboard(request):
     user = request.user
     latest_announcement = Announcement.objects.order_by('-created_at').first()
 
-    # Moderator dashboard first
     if hasattr(user, "profile") and user.profile.is_moderator:
         context = {
             'is_moderator': True,
@@ -194,11 +259,9 @@ def dashboard(request):
         }
         return render(request, 'auth/dashboard.html', context)
 
-    # Instructor pending approval check
     if user.profile.is_instructor and not user.profile.is_approved:
         return render(request, 'auth/pending_approval.html')
 
-    # Instructor dashboard
     if user.profile.is_instructor:
         courses = Course.objects.filter(created_by=user)
         enrollments = Enrollment.objects.filter(course__in=courses).select_related('student')
@@ -210,25 +273,30 @@ def dashboard(request):
             'latest_announcement': latest_announcement,
         })
 
-    # Student dashboard
     enrollments = user.enrollments.select_related('course').distinct()
+
     for enrollment in enrollments:
-        total = enrollment.course.lessons.count()
-        completed = enrollment.completed_lessons.count()
-        enrollment.progress = int((completed / total) * 100) if total > 0 else 0
+        total_lessons = enrollment.course.lessons.count()
+        completed_lessons = enrollment.completed_lessons.count()
+        enrollment.progress = int((completed_lessons / total_lessons) * 100) if total_lessons else 0
 
+    enrolled_course_ids = enrollments.values_list('course', flat=True)
     now = timezone.now()
-    pending_assignments = Assignment.objects.filter(
-        course__in=[en.course for en in enrollments],
-        due_date__gte=now
-    ).filter(
-        Q(submissions__isnull=True) | ~Q(submissions__student=user)
-    ).distinct()
+    all_assignments = Assignment.objects.filter(course__in=enrolled_course_ids)
+    print(f"Total assignments in enrolled courses: {all_assignments.count()}")
+    print(f"Current time: {now}")
+    
 
+    pending_assignments = Assignment.objects.filter(
+        course__in=enrolled_course_ids
+    ).exclude(
+        submissions__student=user
+    ).distinct()
     pending_count = pending_assignments.count()
+    print(f"Pending assignments count: {pending_count}")
     remaining_classes = sum(
-        en.course.lessons.count() - en.completed_lessons.count()
-        for en in enrollments
+        enrollment.course.lessons.count() - enrollment.completed_lessons.count()
+        for enrollment in enrollments
     )
 
     return render(request, 'auth/dashboard.html', {
@@ -239,7 +307,6 @@ def dashboard(request):
         'remaining_classes': remaining_classes,
         'latest_announcement': latest_announcement,
     })
-
 
 
 
@@ -493,7 +560,12 @@ def is_moderator(user):
 @user_passes_test(is_moderator)
 def pending_instructors(request):
     pending_instructors = Profile.objects.filter(is_instructor=True, is_approved=False)
-    return render(request, 'auth/pending_instructors.html', {'pending_instructors': pending_instructors})
+    pending_count = pending_instructors.count()
+    return render(request, 'instructors/pending_instructors.html', {
+        'pending_instructors': pending_instructors,
+        'pending_count': pending_count,
+    })
+
 
 
 @login_required
@@ -502,14 +574,45 @@ def approve_instructor(request, user_id):
     instructor = get_object_or_404(User, id=user_id, profile__is_instructor=True)
     instructor.profile.is_approved = True
     instructor.profile.save()
-    return redirect('pending_instructors')
+    return redirect('instructors')
+
+
 
 @login_required
 def all_instructors(request):
     if not request.user.profile.is_moderator:
         return render(request, 'error.html', {'message': 'Unauthorized access.'})
-    instructors = User.objects.filter(profile__is_instructor=True)
-    return render(request, 'moderator/all_instructors.html', {'instructors': instructors})
+
+    instructors = User.objects.filter(
+        profile__is_instructor=True
+    ).select_related('profile').order_by('username')
+
+    pending_instructors = Profile.objects.filter(
+        is_instructor=True,
+        is_approved=False
+    ).select_related('user')
+
+    return render(request, 'moderator/all_instructors.html', {
+        'instructors': instructors,
+        'pending_instructors': pending_instructors,
+    })
+
+@login_required
+@user_passes_test(is_moderator)
+def remove_instructor(request, user_id):
+    profile = get_object_or_404(Profile, user__id=user_id, is_instructor=True)
+    profile.is_approved = False
+    profile.save()
+    return redirect('instructors')
+
+
+@login_required
+@user_passes_test(is_moderator)
+def instructors(request):
+    instructors = Profile.objects.filter(is_instructor=True)
+    return render(request, 'moderator/instructors.html', {'instructors': instructors})
+
+
 
 @login_required
 def moderator_stats(request):

@@ -13,7 +13,7 @@
       <div class="course-card text-center p-4 h-100">
         <h5 class="fw-bold text-primary mb-1">Total Instructors</h5>
         <p class="display-6 fw-bold mb-2">{{ total_instructors }}</p>
-        <a href="{% url 'all_instructors' %}" class="btn btn-outline-primary btn-sm mt-2">View All</a>
+        <a href="{% url 'instructors' %}" class="btn btn-outline-primary btn-sm mt-2">View All</a>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
   <div class="course-card text-center p-4 h-100">
     <h5 class="fw-bold text-success mb-1">Approved Instructors</h5>
     <p class="display-6 fw-bold mb-2">{{ approved_instructors|default:0|default_if_none:0 }}</p>
-    <a href="{% url 'all_instructors' %}" class="btn btn-outline-success btn-sm mt-2">
+    <a href="{% url 'instructors' %}" class="btn btn-outline-success btn-sm mt-2">
       View Approved
     </a>
   </div>
@@ -31,7 +31,7 @@
   <div class="course-card text-center p-4 h-100">
     <h5 class="fw-bold text-warning mb-1">Pending Approvals</h5>
     <p class="display-6 fw-bold mb-2">{{ pending_instructors|default:0|default_if_none:0 }}</p>
-    <a href="{% url 'pending_instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
+    <a href="{% url 'instructors' %}" class="btn btn-outline-warning btn-sm mt-2">
       View Pending
     </a>
   </div>
