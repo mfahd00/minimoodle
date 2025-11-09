@@ -28,8 +28,10 @@
       <span class="badge badge-hard">Hard</span>
     {% endif %}
   {% endif %}
+  
+  <strong class="ms-3">Duration:</strong>
+  <span class="badge badge-cat text-dark">{{ course.duration_days }} days</span>
 </p>
-
 
   {% if user.is_authenticated %}
     {% if user.profile.is_instructor %}
@@ -119,11 +121,15 @@
   {% if course.assignments.all %}
     <ul class="list-group list-group-flush">
       {% for assignment in course.assignments.all %}
-        <li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
-          <div>
-            <strong class="course-title">{{ assignment.title }}</strong><br>
-            <small>Due: {{ assignment.due_date|date:"Y-m-d H:i" }}</small>
-          </div>
+<li class="list-group-item bg-transparent border-0 border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap">
+  <div>
+    <strong class="course-title">{{ assignment.title }}</strong><br>
+    {% if assignment_due_dates %}
+      <small>Due: {{ assignment_due_dates|dict_get:assignment.id|date:"Y-m-d H:i"|default:"Not enrolled" }}</small>
+    {% else %}
+      <small>Due: {{ assignment.relative_due_days }} days after enrollment</small>
+    {% endif %}
+  </div>
 
           {% if user.is_authenticated %}
     {% if user.profile.is_instructor and user == course.created_by %}

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from datetime import timedelta
 
 
 class Profile(models.Model):
@@ -41,6 +42,7 @@ class Course(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    duration_days = models.PositiveIntegerField(default=30, help_text="Course access duration (in days) after enrollment")
 
     def __str__(self):
         return self.title
@@ -48,7 +50,6 @@ class Course(models.Model):
     @property
     def student_count(self):
         return self.enrollment_set.count()
-
 
 
 class Lesson(models.Model):
@@ -66,23 +67,36 @@ class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     completed_lessons = models.ManyToManyField(Lesson, blank=True)
     enrolled_at = models.DateTimeField(default=timezone.now)
-    is_approved = models.BooleanField(default=False) 
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title}"
 
+    @property
+    def course_end_date(self):
+        return self.enrolled_at + timedelta(days=self.course.duration_days)
+
+    def get_assignment_due_date(self, assignment):
+        return self.enrolled_at + timedelta(days=assignment.relative_due_days)
 
 class Assignment(models.Model):
     course = models.ForeignKey(Course, related_name='assignments', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    due_date = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    relative_due_days = models.PositiveIntegerField(default=7, help_text="Days after enrollment this assignment is due")
 
     def __str__(self):
         return f"{self.title} ({self.course.title})"
-
+    
+    def get_due_date_for_student(self, student):
+        """Calculate the due date for a specific student based on their enrollment date"""
+        from django.utils import timezone
+        enrollment = self.course.enrollment_set.filter(student=student).first()
+        if enrollment:
+            return enrollment.enrolled_at + timezone.timedelta(days=self.relative_due_days)
+        return None
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, related_name='submissions', on_delete=models.CASCADE)

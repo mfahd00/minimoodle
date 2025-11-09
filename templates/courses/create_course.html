@@ -9,6 +9,7 @@
 
     <form method="post">
       {% csrf_token %}
+
       <div class="mb-3">
         <label for="id_title" class="form-label fw-semibold">Title</label>
         <input type="text" id="id_title" name="title" class="form-control" required>
@@ -25,16 +26,21 @@
       </div>
 
       <div class="mb-3">
-  <label class="form-label fw-medium">Difficulty</label>
-  <select name="difficulty" class="form-select">
-    <option value="" selected disabled>Select Difficulty</option>
-    {% for value, label in form.fields.difficulty.choices %}
-      <option value="{{ value }}">{{ label }}</option>
-    {% endfor %}
-  </select>
-</div>
+        <label class="form-label fw-medium">Difficulty</label>
+        <select name="difficulty" class="form-select">
+          <option value="" selected disabled>Select Difficulty</option>
+          {% for value, label in form.fields.difficulty.choices %}
+            <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-
+      <!-- 🕓 New Duration Field -->
+      <div class="mb-3">
+        <label for="id_duration_days" class="form-label fw-semibold">Course Duration (Days)</label>
+        <input type="number" id="id_duration_days" name="duration_days" class="form-control" min="1" placeholder="e.g. 30" required>
+        <div class="form-text text-muted">Number of days students have access after enrollment.</div>
+      </div>
 
       <div class="mb-3">
         <label for="id_description" class="form-label fw-semibold">Description</label>

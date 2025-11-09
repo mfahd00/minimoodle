@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Assignments for {{ course.title }}</h2>
+<p class="mb-3">
+  <strong>Course Duration:</strong> 
+  <span class="badge bg-info text-dark">{{ course.duration_days }} days</span>
+</p>
 <ul>
   {% for a in assignments %}
     <li>

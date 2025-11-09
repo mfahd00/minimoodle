@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block title %}My Assignments | LAP{% endblock %}
 
 {% block content %}
@@ -16,15 +17,38 @@
     <h4 class="warning mb-3">⏳ Pending Assignments</h4>
     {% if pending_assignments %}
       <div class="row g-4">
-        {% for assignment in pending_assignments %}
+        {% for item in pending_assignments %}
           <div class="col-md-6 col-lg-4">
             <div class="course-card h-100 p-4 d-flex flex-column hover-glow">
-              <h5 class="fw-bold mb-2 section-heading">{{ assignment.title }}</h5>
-              <p class="small mb-1"><strong>Course:</strong> {{ assignment.course.title }}</p>
-              <p class="small mb-2">{{ assignment.description|truncatewords:20 }}</p>
-              <p class="mb-3"><strong>Due:</strong> {{ assignment.due_date|date:"M d, Y H:i" }}</p>
+              <h5 class="fw-bold mb-2 section-heading">{{ item.assignment.title }}</h5>
+              <p class="small mb-1"><strong>Course:</strong> {{ item.assignment.course.title }}</p>
+              <p class="small mb-2">{{ item.assignment.description|truncatewords:20 }}</p>
+              
+              {% if item.due_date %}
+                <p class="mb-2"><strong>Due:</strong> {{ item.due_date|date:"M d, Y H:i" }}</p>
+                {% with days_left=item.due_date|days_until %}
+                  {% if days_left is not None %}
+                    {% if days_left >= 0 %}
+                      <p class="small mb-3">
+                        <strong>Time left:</strong> 
+                        <span class="badge {% if days_left == 0 %}bg-danger{% elif days_left <= 2 %}bg-warning text-dark{% elif days_left <= 7 %}bg-info{% else %}bg-success{% endif %}">
+                          {% if days_left == 0 %}Due today{% else %}{{ days_left }} day{{ days_left|pluralize }} left{% endif %}
+                        </span>
+                      </p>
+                    {% else %}
+                      <p class="small mb-3">
+                        <strong>Status:</strong> 
+                        <span class="badge bg-danger">Overdue by {{ days_left|abs_value }} day{{ days_left|abs_value|pluralize }}</span>
+                      </p>
+                    {% endif %}
+                  {% endif %}
+                {% endwith %}
+              {% else %}
+                <p class="mb-3"><strong>Due:</strong> Not available</p>
+              {% endif %}
+              
               <div class="mt-auto">
-                <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-primary w-100 fw-semibold">
+                <a href="{% url 'submit_assignment' item.assignment.id %}" class="btn btn-primary w-100 fw-semibold">
                   Submit Assignment
                 </a>
               </div>
@@ -45,12 +69,12 @@
     <h4 class="text-success mb-3">✅ Submitted Assignments</h4>
     {% if submitted_assignments %}
       <div class="row g-4">
-        {% for assignment in submitted_assignments %}
+        {% for item in submitted_assignments %}
           <div class="col-md-6 col-lg-4">
             <div class="course-card h-100 p-4 d-flex flex-column border-success border-opacity-50 hover-glow">
-              <h5 class="fw-bold text-success mb-2">{{ assignment.title }}</h5>
-              <p class="small mb-1"><strong>Course:</strong> {{ assignment.course.title }}</p>
-              <p class="small mb-2"><strong>Due:</strong> {{ assignment.due_date|date:"M d, Y H:i" }}</p>
+              <h5 class="fw-bold text-success mb-2">{{ item.assignment.title }}</h5>
+              <p class="small mb-1"><strong>Course:</strong> {{ item.assignment.course.title }}</p>
+              <p class="small mb-2"><strong>Due:</strong> {{ item.due_date|date:"M d, Y H:i"|default:"Not available" }}</p>
               <div class="mt-auto">
                 <span class="badge bg-success py-2 px-3 w-100">
                   <i class="bi bi-check-circle"></i> Submitted

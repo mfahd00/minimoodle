@@ -146,21 +146,26 @@ def course_list(request):
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     lessons = course.lessons.all()
-    enrolled = Enrollment.objects.filter(course=course, student=request.user).exists()
+    enrolled = False
     submissions = {}
-
-    if hasattr(request.user, "profile") and not request.user.profile.is_instructor:
-        user_submissions = Submission.objects.filter(
-            assignment__course=course,
-            student=request.user
-        ).select_related("assignment")
-        submissions = {s.assignment.id: True for s in user_submissions}
-
-    return render(request, "courses/course_detail.html", {
-        "course": course,
-        "lessons": lessons,
-        "enrolled": enrolled,
-        "submissions": submissions,
+    assignment_due_dates = {}
+    
+    if request.user.is_authenticated:
+        enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+        
+        for assignment in course.assignments.all():
+            submission = Submission.objects.filter(assignment=assignment, student=request.user).first()
+            submissions[assignment.id] = submission
+            
+            if enrolled:
+                assignment_due_dates[assignment.id] = assignment.get_due_date_for_student(request.user)
+    
+    return render(request, 'courses/course_detail.html', {
+        'course': course,
+        'lessons': lessons,
+        'enrolled': enrolled,
+        'submissions': submissions,
+        'assignment_due_dates': assignment_due_dates,
     })
 
 
@@ -244,8 +249,7 @@ def remove_enrollment(request, enrollment_id):
 
 
 from django.db.models import Q
-@login_required
-@login_required
+@login_required 
 def dashboard(request):
     user = request.user
     latest_announcement = Announcement.objects.order_by('-created_at').first()
@@ -385,7 +389,6 @@ def courses_by_category(request, category_id):
         'full_page_center': False,
     })
 
-from django.shortcuts import render
 
 def login_page(request):
     return render(request, 'auth/login.html')
@@ -461,18 +464,54 @@ def view_submissions(request, assignment_id):
 
 @login_required
 def student_assignments(request):
+    from django.utils import timezone
+    
     if request.user.profile.is_instructor:
         return HttpResponseForbidden("Instructors cannot access student assignments.")
 
-    enrolled_courses = Enrollment.objects.filter(student=request.user).values_list('course', flat=True)
-    assignments = Assignment.objects.filter(course__in=enrolled_courses).order_by('-due_date')
+    # Get enrolled courses with enrollment dates
+    enrollments = Enrollment.objects.filter(student=request.user).select_related('course')
+    enrolled_course_ids = [e.course.id for e in enrollments]
+    
+    # Create a mapping of course_id to enrollment date
+    enrollment_dates = {e.course.id: e.enrolled_at for e in enrollments}
+    
+    # Get all assignments from enrolled courses
+    assignments = Assignment.objects.filter(course__in=enrolled_course_ids).select_related('course', 'created_by')
+    
+    # Get submitted assignment IDs
     submitted_ids = Submission.objects.filter(student=request.user).values_list('assignment_id', flat=True)
-    pending_assignments = assignments.exclude(id__in=submitted_ids)
-    submitted_assignments = assignments.filter(id__in=submitted_ids)
+    
+    # Prepare assignment data with calculated due dates
+    pending_list = []
+    submitted_list = []
+    
+    for assignment in assignments:
+        # Calculate due date for this student
+        enrollment_date = enrollment_dates.get(assignment.course.id)
+        due_date = None
+        if enrollment_date:
+            due_date = enrollment_date + timezone.timedelta(days=assignment.relative_due_days)
+        
+        assignment_info = {
+            'assignment': assignment,
+            'due_date': due_date,
+        }
+        
+        if assignment.id in submitted_ids:
+            submitted_list.append(assignment_info)
+        else:
+            pending_list.append(assignment_info)
+    
+    # Sort pending by due date (earliest first, None values last)
+    pending_list.sort(key=lambda x: (x['due_date'] is None, x['due_date'] or timezone.now()))
+    
+    # Sort submitted by due date (most recent first)
+    submitted_list.sort(key=lambda x: (x['due_date'] is None, x['due_date'] or timezone.now()), reverse=True)
 
     return render(request, 'assignments/student_assignments.html', {
-        'pending_assignments': pending_assignments,
-        'submitted_assignments': submitted_assignments,
+        'pending_assignments': pending_list,
+        'submitted_assignments': submitted_list,
         'page_title': 'My Assignments',
     })
 

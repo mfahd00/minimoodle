@@ -170,7 +170,7 @@
       </div>
     </div>
 
-    <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
+   <h3 class="mt-4 mb-2 fw-semibold section-subheading">Your Enrolled Courses</h3>
     {% if enrollments %}
       <div class="row g-4">
         {% for enrollment in enrollments %}
@@ -187,6 +187,26 @@
               <p class="text-secondary small mb-2">
                 <strong>Instructor:</strong> {{ enrollment.course.created_by.username }}
               </p>
+              
+              {% load custom_tags %}
+              {% with days_remaining=enrollment|days_until_expiry %}
+                {% if days_remaining is not None %}
+                  {% if days_remaining > 0 %}
+                    <p class="small mb-2">
+                      <strong>Course ends in:</strong> 
+                      <span class="badge {% if days_remaining <= 7 %}bg-danger{% elif days_remaining <= 14 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                        {{ days_remaining }} day{{ days_remaining|pluralize }}
+                      </span>
+                    </p>
+                  {% else %}
+                    <p class="small mb-2">
+                      <strong>Status:</strong> 
+                      <span class="badge bg-secondary">Expired</span>
+                    </p>
+                  {% endif %}
+                {% endif %}
+              {% endwith %}
+              
               <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-info mt-auto">Go to Course</a>
             </div>
           </div>
@@ -194,7 +214,7 @@
       </div>
     {% else %}
       <div class="empty-state text-center py-5">
-        <p class="mb-3 text-muted">You haven’t enrolled in any courses yet.</p>
+        <p class="mb-3 text-muted">You haven't enrolled in any courses yet.</p>
         <a href="{% url 'course_list' %}" class="btn btn-outline-info px-4 py-2 rounded-pill">Browse Courses</a>
       </div>
     {% endif %}

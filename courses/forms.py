@@ -5,9 +5,10 @@ from django.contrib.auth.forms import UserCreationForm
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['title', 'description', 'category', 'difficulty']
+        fields = ['title', 'description', 'category', 'difficulty', 'duration_days']
         widgets = {
             'difficulty': forms.Select(attrs={'class': 'form-select'}),
+            'duration_days': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'placeholder': 'e.g. 30'}),
         }
 
 class LessonForm(forms.ModelForm):
@@ -40,10 +41,30 @@ class CustomUserCreationForm(UserCreationForm):
 class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
-        fields = ['title', 'description', 'due_date']
+        fields = ['title', 'description', 'relative_due_days']
         widgets = {
-            'due_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'description': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'relative_due_days': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'placeholder': 'e.g. 7'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    
+    def __init__(self, *args, course=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.course = course
+        if course:
+            max_days = course.duration_days + 5
+            self.fields['relative_due_days'].widget.attrs['max'] = max_days
+            self.fields['relative_due_days'].help_text = f'Number of days after enrollment this assignment is due. Maximum: {max_days} days (course duration + 5 days).'
+    
+    def clean_relative_due_days(self):
+        relative_due_days = self.cleaned_data.get('relative_due_days')
+        if self.course:
+            max_days = self.course.duration_days + 5
+            if relative_due_days > max_days:
+                raise forms.ValidationError(
+                    f'Assignment due date cannot exceed {max_days} days (course duration + 5 days).'
+                )
+        return relative_due_days
 
 class SubmissionForm(forms.ModelForm):
     class Meta:
